@@ -15,6 +15,7 @@ return array(
         'module_paths' => array(
             './module',
             './vendor',
+            //@TODO : set this outside the file please !
             'C:\\Program Files (x86)\\Zend\Apache2\\htdocs\\ZendServerWebApi',
         ),
 
