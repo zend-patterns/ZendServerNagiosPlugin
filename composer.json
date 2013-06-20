@@ -1,0 +1,12 @@
+{
+    "name": "zsconnector/zsnagiosplugin",
+    "description": "zend Server plugin for Nagios",
+    "keywords": [
+        "nagios", "zend Server", "zf2"
+    ],
+    "require": {
+        "php": ">=5.3.3",
+        "zendframework/zendframework": "2.*",
+        "zendserverwebapi/zendserverwebapi": "@dev"
+    }
+}
