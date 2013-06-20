@@ -3,7 +3,7 @@
  * This makes our life easier when dealing with paths. Everything is relative
  * to the application root now.
  */
-chdir(dirname(__DIR__));
+chdir(__DIR__);
 define('__ROOT__',dirname(__DIR__));
 
 // Setup autoloading

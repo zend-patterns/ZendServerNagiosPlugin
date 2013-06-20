@@ -1,19 +1,22 @@
 <?php
 namespace ZendServerNagiosPlugin\Controller;
+use Zend\ModuleManager\Feature\ConsoleBannerProviderInterface;
+use Zend\ModuleManager\Feature\ConsoleUsageProviderInterface;
+use Zend\Console\Adapter\AdapterInterface;
 
 /**
  * Nagios plugins controller
  */
-class ConsoleController extends AbstractNagiosController
+class ConsoleController extends AbstractNagiosController 
 {
-
     /**
      * Check how many nodes are up in the cluster
      */
     public function clusterstatusAction ()
     {
         $clusterStatus = $this->sendApiMethod('clusterGetServerStatus');
-        if ( ! $clusterStatus) return;
+        if (! $clusterStatus)
+            return;
         $nodeCount = $clusterStatus->responseData->serverList->count();
         $nodeError = 0;
         foreach ($clusterStatus->responseData->serversList->serverInfo as $serverInfo) {
@@ -41,7 +44,8 @@ class ConsoleController extends AbstractNagiosController
     public function notificationsAction ()
     {
         $notifications = $this->sendApiMethod('getNotifications');
-        if ( ! $notifications) return;
+        if (! $notifications)
+            return;
         $notificationsCount = $notifications->responseData->notifications->count();
         if ($notificationsCount == 0) {
             $this->setStatus(self::NAGIOS_OK);
@@ -69,12 +73,14 @@ class ConsoleController extends AbstractNagiosController
      */
     public function audittrailAction ()
     {
-        $auditTrail = $this->sendApiMethod('auditGetList', array(
+        $auditTrail = $this->sendApiMethod('auditGetList', 
+                array(
                         'limit' => $this->params('limit', 5),
                         'order' => 'creation_time',
                         'direction' => 'DESC'
                 ));
-        if (! $auditTrail) return;
+        if (! $auditTrail)
+            return;
         $delay = $this->params('delay', 10);
         $statusMessage = '';
         $severity = self::NAGIOS_OK;
@@ -109,7 +115,8 @@ class ConsoleController extends AbstractNagiosController
     public function licenceAction ()
     {
         $notifications = $this->sendApiMethod('getNotifications');
-        if ( ! $notification) return;
+        if (! $notifications)
+            return;
         $notificationsCount = $notifications->responseData->notifications->count();
         $statusMessage = 'Licence Ok';
         if ($notificationsCount == 0) {
@@ -144,12 +151,14 @@ class ConsoleController extends AbstractNagiosController
      */
     public function eventsAction ()
     {
-        $events = $this->sendApiMethod('monitorGetIssuesByPredefinedFilterx', array(
-        				'filterId' => 'All',
-        				'limit' => $this->params('limit', 5),
-        				'direction' => 'DESC'
-        		));
-        if ( ! $events) return;
+        $events = $this->sendApiMethod('monitorGetIssuesByPredefinedFilter', 
+                array(
+                        'filterId' => 'All',
+                        'limit' => $this->params('limit', 5),
+                        'direction' => 'DESC'
+                ));
+        if (! $events)
+            return;
         $delay = $this->params('delay', 10);
         $statusMessage = '';
         $severity = self::NAGIOS_OK;

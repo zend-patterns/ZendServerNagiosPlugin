@@ -7,69 +7,73 @@ return array(
         ),
         'console' => array(
                 'router' => array(
+                        'default_params' => array(
+                                'controller' => 'ZendServerNagiosPlugin\Controller\Console'
+                        ),
                         'routes' => array(
-                /*
-                 * Get cluster status 
-                 */
-                'clusterstatus' => array(
+                        /*
+                         * Get cluster status 
+                         */
+                        'clusterstatus' => array(
                                         'options' => array(
                                                 'route' => 'nagiosplugin clusterstatus',
                                                 'defaults' => array(
-                                                        'controller' => 'ZendServerNagiosPlugin\Controller\Console',
                                                         'action' => 'clusterstatus'
-                                                )
+                                                ),
+                                                'usage' => 'Get Cluster status'
                                         )
                                 ),
-                /*
-                 * Get audiTrail notification
-                 * --delay : the time intervalle (in second) the system while search for new audit trail. Should be the same value has your Nagios checking intervalle.
-                 * --limit : Maximl number of audit messages to be fetched from the Zend Server
-                 */
-                'audittrail' => array(
+                        /*
+                         * Get audiTrail notification
+                         * --delay : the time intervalle (in second) the system while search for new audit trail. Should be the same value has your Nagios checking intervalle.
+                         * --limit : Maximl number of audit messages to be fetched from the Zend Server
+                         */
+                        'audittrail' => array(
                                         'options' => array(
                                                 'route' => 'nagiosplugin audittrail [--delay=] [--limit=]',
                                                 'defaults' => array(
-                                                        'controller' => 'ZendServerNagiosPlugin\Controller\Console',
                                                         'action' => 'audittrail',
                                                         'limit' => 5,
                                                         'delay' => 10
-                                                )
+                                                ),
+                                                'usage' => 'Get last audit trails'
                                         )
                                 ),
-                /*
-                 * Get notification
-                 */
-                'notifications' => array(
+                        /*
+                         * Get notification
+                         */
+                        'notifications' => array(
                                         'options' => array(
                                                 'route' => 'nagiosplugin notifications',
                                                 'defaults' => array(
-                                                        'controller' => 'ZendServerNagiosPlugin\Controller\Console',
                                                         'action' => 'notifications'
-                                                )
+                                                ),
+                                                'usage' => 'Get curent notifications'
                                         )
                                 ),
-                /*
-                 * Get Licence validity
-                */
-                'licence' => array(
+                        /*
+                         * Get Licence validity
+                        */
+                        'licence' => array(
                                         'options' => array(
                                                 'route' => 'nagiosplugin licence',
                                                 'defaults' => array(
                                                         'controller' => 'ZendServerNagiosPlugin\Controller\Console',
                                                         'action' => 'licence'
-                                                )
+                                                ),
+                                                'usage' => 'Check licence validity'
                                         )
                                 ),
-                /*
-                 * Get Monitor events
-                */
-                'events' => array(
+                        /*
+                         * Get Monitor events
+                        */
+                        'events' => array(
                                         'options' => array(
                                                 'route' => 'nagiosplugin events [--delay=] [--limit=]',
                                                 'defaults' => array(
-                                                        'controller' => 'ZendServerNagiosPlugin\Controller\Console',
                                                         'action' => 'events'
-                                                )
+                                                ),
+                                                'usage' => 'get last Monitor events'
                                         )
                                 )
                         )
@@ -136,8 +140,7 @@ return array(
                         'AUDIT_GUI_CHANGE_AUTHENTICATION_SETTINGS' => 'NAGIOS_WARNING',
                         'AUDIT_GUI_CHANGE_PASSWORD' => 'NAGIOS_WARNING',
                         'AUDIT_GUI_AUTHORIZATION' => 'NAGIOS_WARNING',
-                        'AUDIT_GUI_AUTHENTICATION_LOGOUT' => 'NAGIOS_WARNING', // not
-                                                                               // used
+                        'AUDIT_GUI_AUTHENTICATION_LOGOUT' => 'NAGIOS_WARNING', // not used
                         
                         'AUDIT_GUI_AUDIT_SETTINGS_SAVE' => 'NAGIOS_WARNING',
                         'AUDIT_GUI_BOOTSTRAP_CREATEDB' => 'NAGIOS_WARNING',
@@ -150,8 +153,7 @@ return array(
                         'AUDIT_SERVER_REMOVE' => 'NAGIOS_CRITICAL',
                         'AUDIT_SERVER_REMOVE_FORCE' => 'NAGIOS_CRITICAL',
                         'AUDIT_SERVER_RENAME' => 'NAGIOS_CRITICAL',
-                        'AUDIT_SERVER_SETPASSWORD' => 'NAGIOS_CRITICAL', // not
-                                                                         // used
+                        'AUDIT_SERVER_SETPASSWORD' => 'NAGIOS_CRITICAL', // not used
                         
                         'AUDIT_CODETRACING_CREATE' => 'NAGIOS_WARNING',
                         'AUDIT_CODETRACING_DELETE' => 'NAGIOS_WARNING',
