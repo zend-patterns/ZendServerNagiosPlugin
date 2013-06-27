@@ -12,7 +12,7 @@ Command line operations and probes definitions
 ----------------------------------------------
 A scripts for Windows and Linux is provide in the /bin directory.
 To invoke the Nagios plugin command simply use :
-    ZSNagiosPlugin <probe> [parameters]
+    php /path_to_plugin/index.php nagiospluging <probe> [parameters]
 
 __clusterstatus__ (no parameter) : 
 Return the status of your cluster. Severity depends on the number of nodes that are up or down.
@@ -27,11 +27,11 @@ __notifications (no parmeters)__ :
 This probe look into the current notifications sent by the cluster.
 The severity level is based on the severity of the most critical notification.
 
-__Licence (no parameter)__ :
+__licence (no parameter)__ :
 This probe check the licence validity.
 The severity level is based on the licence time validity remaining
 
-__Events [--delay=] [--limit=]__ :
+__events [--delay=] [--limit=]__ :
 Return the severity of the last monitor events.
 --delay : the time period (in second) in which the probe will looking for events.It should be synchronized with the check_interval value of Nagios.
 --limit : the maximal number of item that will be checked out.
@@ -52,8 +52,11 @@ Installation
 Using Git submodules
 --------------------
 Clone the code from Github :
+
     git clone git://github.com/zendtech/ZendServerNagiosPlugin.git --recursive
+    
 Install dependencies with Composer : 
+
 	composer install
 
 How to use it within Nagios ?
@@ -74,7 +77,7 @@ Define the service into your host configuration (ie : /usr/local/nagios3/conf.d/
         check_command                   zend-server-<probe>
     }   
     
-Then restrat Nagio :
+Then restart Nagio :
 
     /etc/init.d/nagios3 restart
     
