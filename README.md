@@ -14,24 +14,24 @@ A scripts for Windows and Linux is provide in the /bin directory.
 To invoke the Nagios plugin command simply use :
     ZSNagiosPlugin <probe> [parameters]
 
-Clusterstatus (no parameter) : 
+__clusterstatus__ (no parameter) : 
 Return the status of your cluster. Severity depends on the number of nodes that are up or down.
 
-Audittrail [--delay=] [--limit=] :
+__audittrail [--delay=] [--limit=]__ :
 Return the severity of the last audit trail.
 --delay : the time period (in second) in which the probe will looking for audit trails. It should be synchronized with the check_interval value of Nagios.
 --limit : the maximal number of item that will be checked out.
 The severity level is based on the severity of the most critical item that have been collected.
 
-Notifications (no parmeters) :
+__notifications (no parmeters)__ :
 This probe look into the current notifications sent by the cluster.
 The severity level is based on the severity of the most critical notification.
 
-Licence (no parameter) :
+__Licence (no parameter)__ :
 This probe check the licence validity.
 The severity level is based on the licence time validity remaining
 
-Events [--delay=] [--limit=] :
+__Events [--delay=] [--limit=]__ :
 Return the severity of the last monitor events.
 --delay : the time period (in second) in which the probe will looking for events.It should be synchronized with the check_interval value of Nagios.
 --limit : the maximal number of item that will be checked out.
@@ -58,26 +58,25 @@ Install dependencies with Composer :
 
 How to use it within Nagios ?
 ---------------------------
-Define the command  into your commands.cfg file: 
+Define the command  into your /usr/local/nagios3/commands.cfg file: 
+
     define command {
 	    command_name : zend-server-<probe>
-	    command_line : ZSNagiosPlugin <probe> [parameters]
+	    command_line : php /path_to_nagios_pluigin/index.php nagiosplugin <probe> [parameters]
     }
     
-Define the service into your host configuration : 
+Define the service into your host configuration (ie : /usr/local/nagios3/conf.d/local-xxx.cfg): 
+
     define service {
-        use                             local-service ; Name of service template to use
+        use                             generic-service 
         host_name                       localhost
         service_description             Zend_Server_Error
         check_command                   zend-server-<probe>
-        check_interval                  5 ; check every 5 minutes (if you havent changed your time units)
-        register                        1
-        active_checks_enabled           1
-        retry_interval                  1 ; retry every minute when in an error state
-        max_check_attempts              4 ; test 4 times before deciding the hard state
-        contact_groups                  admins ; contact the admin with errors	
     }   
     
+Then restrat Nagio :
+
+    /etc/init.d/nagios3 restart
     
     
     
