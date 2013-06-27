@@ -31,8 +31,8 @@ abstract class AbstractNagiosController extends AbstractActionController
     public function onDispatch(MvcEvent $e)
     {
     	$actionResponse = parent::onDispatch($e);
-        echo $this->status;
         fwrite(STDOUT, $this->statusMessage);
+        exit($this->status);
     }
     
     /**
