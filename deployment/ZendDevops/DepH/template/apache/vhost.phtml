@@ -1,0 +1,16 @@
+# Created by ZendDevops\DepH Deployment scripts
+
+<VirtualHost *:80>
+	DocumentRoot "C:/Program Files (x86)/Zend/ZendServer/data/apps/http/<?php echo $this->host ?>/80/_docroot_"
+	<Directory "C:/Program Files (x86)/Zend/ZendServer/data/apps/http/<?php echo $this->host?>/80">
+		Options +Indexes
+		DirectoryIndex index.php
+		Order allow,deny
+		Allow from all
+	</Directory>
+
+
+	ServerName <?php echo $this->host?>:80
+	Include "C:/Program Files (x86)/Zend/ZendServer/etc/sites.d/http/<?php echo $this->host ?>/80/*.conf"
+
+</VirtualHost>

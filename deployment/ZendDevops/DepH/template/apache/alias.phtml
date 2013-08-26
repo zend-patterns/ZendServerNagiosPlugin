@@ -1,0 +1,8 @@
+	Alias <?php echo $this->url?> "<?php echo $this->directory?>"
+	<Directory "<?php echo $this->directory?>">
+		AllowOverride All
+		Options +Indexes
+		DirectoryIndex index.php
+		Order allow,deny
+		Allow from all
+	</Directory>

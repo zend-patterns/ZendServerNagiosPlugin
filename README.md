@@ -1,8 +1,25 @@
 Zend Server Nagios plugin
-=======================
+=========================
 
 Introduction
 ------------
+
+Nagios® Core™ is an Open Source system and network monitoring application.
+It watches hosts and services that you specify, alerting you when things go bad and when they get better.
+
+Some of the many features of Nagios Core include:
+
+- Monitoring of network services (SMTP, POP3, HTTP, NNTP, PING, etc.)
+- Monitoring of host resources (processor load, disk usage, etc.)
+- Simple plugin design that allows users to easily develop their own service checks
+- Parallelized service checks
+- Ability to define network host hierarchy using "parent" hosts, allowing detection of and distinction between hosts that are down and those that are unreachable
+- Contact notifications when service or host problems occur and get resolved (via email, pager, or user-defined method)
+- Ability to define event handlers to be run during service or host events for proactive problem resolution
+- Automatic log file rotation
+- Support for implementing redundant monitoring hosts
+- Optional web interface for viewing current network status, notification and problem history, log file, etc.
+
 This PHP ZF2 application can be used as a Nagios plugins to monitor main Zend Server metrics.
 The plugin is based on a command line tool which returns the severity level of the given probe. 
 It also yield a message that will be recorded into Nagios.
