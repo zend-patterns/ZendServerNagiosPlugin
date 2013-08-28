@@ -20,4 +20,15 @@
       </zendframework2>
     </required>
   </dependencies>
-</package>
+    <parameters>
+    <parameter display="Web API Key name" id="key" readonly="false" required="true" type="string">
+      <defaultvalue>admin</defaultvalue>
+    </parameter>
+    <parameter display="Web API Secret" id="secret" readonly="false" required="true" type="string">
+      <defaultvalue>d2cc2bd7a8252700b51867ce1c7195ba97300ab42e3a400465c495fa91546200</defaultvalue>
+    </parameter>
+    <parameter display="Zend Server Url" id="target_host" readonly="false" required="true" type="string">
+      <defaultvalue>http://localhost:10081</defaultvalue>
+    </parameter>
+    </parameters>
+    </package>

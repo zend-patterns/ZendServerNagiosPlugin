@@ -1,3 +1,4 @@
+#!/usr/local/zend/bin/php
 <?php
 /**
  * This makes our life easier when dealing with paths. Everything is relative
@@ -5,7 +6,7 @@
  */
 chdir(__DIR__);
 define('__ROOT__',dirname(__DIR__));
-
+ini_set('display_errors', 0);
 // Setup autoloading
 require 'init_autoloader.php';
 // Run the application!
