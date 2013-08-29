@@ -1,68 +1,74 @@
 ## Introduction ##
 
-Nagios is a system on network monitoring application. It watches hosts and services that you specify, alerting you when things go bad and when they get better.
+This tutorial explains how to set up a Nagios-monitored Zend Server using the Zend Server Nagios plugin, and how to configure the thresholds to personalize your alert severity levels.
 
-Nagios define kind of probes named "services" that forward to the Nagios server any information about a specific operating system or application metrics. Nagios come with many built-in services but it is easy to define plugins to add more services.
+Nagios is an open source system and network monitoring application. It watches hosts and services that you specify, alerting you when things go bad and when they get better.
 
-The Zend Server Nagios plugin has been designed to let Nagios knows about the main Zend Server metric like cluster nodes status, monitoring events, notifications, etc.
+Nagios defines probes named "services" that forward any information about a specific operating system or application metrics to the Nagios server. Nagios comes with plenty of built-in services, but it is easy to plugin additional services.
 
-The purpose of this tutorial is to show you how to set a nagios-monitored Zend server using the Nagios Zend server plugin and how to configure the thresholds to personnalize your alert severity levels.
+The Zend Server Nagios plugin has been designed to allow Nagios to monitor the main Zend Server metrics, such as: cluster node status, monitoring events, notifications, etc.
 
-**Client / server architecture**
+**Client / Server Architecture**
 
-Nagios architectures are generally based on a central Nagios server collecting information from services hosted on many Nagios client.In this tutorial Nagios clients and Nagios server will be hosted by the same machine.
+Nagios architectures are generally based on a central Nagios server collecting information from services hosted on Nagios clients. In this tutorial, the Nagios clients and the Nagios server are hosted by the same machine.
 
-**About ZendServerNagiosPlugin**
+**About the Zend Server Nagios Plugin**
 
-This plugin is a ZF2 based PHP CLI application. You can use it directly on the command line and check manually the health of your system : 
+This plugin is a ZF2-based PHP CLI application. You can use it directly from the command line, and manually check the health of your system: 
 index.php nagiosplugin <command> arguments.
+
 Available commands are : 
 
-- *clusterstatus* : monitoring percentage of cluster nodes currently down 
-- *audittrail* : monitoring audit Trail records
-- *notifications* : monitoring notifications
-- *licence* : monitoring licence expiration delay
-- *events* : monitoring Zend Monitor events
+- *clusterstatus* : monitors the percentage of cluster nodes currently down 
+- *audittrail* : monitors Zend Server Audit Trail records
+- *notifications* : monitors Zend Server notifications
+- *licence* : monitors licence expiration delay
+- *events* : monitors Zend Server monitoring events
 
-## Install your system ##
+## 1. Installing your System ##
 
-**Install Zend Server 6.x**
+The first step in this tutorial is to install Zend Server 6.x, Nagios, and the plugin.
 
-Install Zend Server 6.x as usual.
-If you need help for this step see : 
-	
-	http://files.zend.com/help/Zend-Server-6/zend-server.htm#installation_guide.htm
+**Installing Zend Server 6.x**
 
-Don't forget to set a timezone.
+For detailed instructions on installing Zend Server 6.x, see: 	
 
-**Use apt-get to install Nagios:**
+http://files.zend.com/help/Zend-Server-6/zend-server.htm#installation_guide.htm
 
-	apt-get install nagios3 nagios-plugins nagios-nrpe-plugin nagios-nrpe-server
+Important!
+Before continuing, you will need to set your timezone by editing the 'date.timezone' PHP directive. You can do this using the Zend Server UI, on the Configurations | PHP page. 
 
-In the process of installing you get asked for samba workgroup and WINS Settings just let these set on default.
+**Installing Nagios**
 
-You will also asked to set the nagiosadmin password.
+Use apt-get to install Nagios. Run the following command:
+
+apt-get install nagios3 nagios-plugins nagios-nrpe-plugin nagios-nrpe-server
+
+During the installation process, you will be asked for samba workgroup and WINS Settings.  Just leave the default settings.
+
+You will also be asked to set the nagiosadmin password.
     
-After this you should be able to login to: http://myhost/nagios3/ with the username nagiosadmin and the password you just set before.
+You should now be able to log in at: http://myhost/nagios3/ with the username nagiosadmin and the password you just set.
 
-If you go to the service detail site you will see that Nagios provides already a basic configuration for the localhost.
+In the Service section, you will see that Nagios already provides a basic configuration for the localhost.
 
-Notice that we have to install package for both server and client side of Nagios on the same machine, but for a realistic system:
+Note:
+For this tutorial, we have to install packages for both the server and client side of Nagios on the same machine. In normal circumstances though: 
 
 - nagios3 and nagios-nrpe-plugin are used by the Nagios server
 - nagios-nrpe-server is used by the Nagios client
-- nagios-plugins is used by both sides of Nagios.
+- nagios-plugins is used by both sides of Nagios
 
+**Installing and Configuring the Plugin**
 
-**Install and set the plugin**
+To install the Zend Server Nagios plugin: 
 
-To deploy the application : 
+1. Unzip the application file in a directory. For example:
+ /usr/local/nagiosplugin.
 
-1. unzip the application file in a directory. By exemple : /usr/local/nagiosplugin.
+2. Open the '/usr/local/nagiosplugin/vendor/zendserverwebapi/zendserverwebapi/congif.zendserverwebapi.config.php' file, and modify the 'zsapi' part of the configuration as follows: 
 
-2. Edit the fie */usr/local/nagiosplugin/vendor/zendserverwebapi/zendserverwebapi/congif.zendserverwebapi.config.php* and add or modify the 'zsapi' part of the configuration : 
-
-	    //Zend Server API specific Settings
+	//Zend Server API specific Settings
     	'zsapi' => array (
     	// Default Zend Server Target
     		'default_target' => array(
@@ -73,23 +79,11 @@ To deploy the application :
     		),
     	),
 
-Now your able to reach the plugin in the command line :
+3. You can now access the plugin from the command line. To do this, run:
 
-	php /usr/local/nagiosplugin/index.php nagiosplugin clustserstatus
+php /usr/local/nagiosplugin/index.php nagiosplugin clustserstatus
 
-
-**Deploy the plugin application using Zend deployment**
-
-Download the .zpk file and deploy the plugin with Zend Server Deployment Component.You will be asked for the Zend Server you want to monitor and the API key you will use. 
-Generally an "admin" key is already availbale in your Zend Server but you can create a new one is you prefer. In this case don't forget to set "admin" as the key owner.
-
-Now your able to reach the plugin in the command line. By exemple :
-
-	php [application_directory]/index.php nagiosplugin clustserstatus
-
-Be careful : you will have to change the [application_directory] each time you update the plugin using Zend Deployment. Because the applicaton path is based on the application version.
-
-## Configure Nagios client ##
+## 2. Configuring the Nagios Client ##
 
 The next step is to connect the Zend Server plugin to the Nagios server. The main operation is to define a command by adding a new definition into the nrpe-server configuration file. To do that simply edit the file */etc/nagios/nrpe.cfg*, and add a new command :
 
@@ -104,7 +98,7 @@ Now the client layer is ready to send informations to the main Nagios server. In
 
 Now let see how this command will be used by the Nagios server.
 
-# Configure Nagios server #
+# 3. Configuring the Nagios Server #
 
 **Define command**
 
@@ -137,7 +131,7 @@ Then restart the nagios Server
 
 The new service is now available. Check it on the Nagios web console : *http://myhost/nagios3/*. Nagios will chech its services evry 1O minutes. Be patient.
 
-## Setting Zend Server Nagios plugin threshold ##
+## 4. Setting Zend Server Nagios Plugin Thresholds ##
 
 Nagios manage 3 levels of criticity :
 
