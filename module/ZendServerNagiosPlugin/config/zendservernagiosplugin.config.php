@@ -2,13 +2,14 @@
 return array(
         'controllers' => array(
                 'invokables' => array(
-                        'ZendServerNagiosPlugin\Controller\Console' => 'ZendServerNagiosPlugin\Controller\ConsoleController'
+                        'ConsoleController' => 'ZendServerNagiosPlugin\Controller\ConsoleController',
+                        'CoreController' => 'ZendServerNagiosPlugin\Controller\CoreController'
                 )
         ),
         'console' => array(
                 'router' => array(
                         'default_params' => array(
-                                'controller' => 'ZendServerNagiosPlugin\Controller\Console'
+                                'controller' => 'ConsoleController'
                         ),
                         'routes' => array(
                         /*
@@ -53,7 +54,7 @@ return array(
                                 ),
                         /*
                          * Get Licence validity
-                        */
+                         */
                         'licence' => array(
                                         'options' => array(
                                                 'route' => 'nagiosplugin licence',
@@ -66,7 +67,7 @@ return array(
                                 ),
                         /*
                          * Get Monitor events
-                        */
+                         */
                         'events' => array(
                                         'options' => array(
                                                 'route' => 'nagiosplugin events [--delay=] [--limit=]',
@@ -75,8 +76,21 @@ return array(
                                                 ),
                                                 'usage' => 'get last Monitor events'
                                         )
+                                ),
+                        /*
+                         * Install the plugin
+                         */
+                        'install' => array(
+                                'options' => array(
+                                        'route' => 'nagiosplugin install [--zsurl=] [--zskey=] [--zssecret=]',
+                                        'defaults' => array(
+                                                'action' => 'install',
+                                                'controller' => 'CoreController',
+                                        ),
+                                        'usage' => 'Install the plugin (use it as root)'
                                 )
-                        )
+                            )   
+                        ),
                 )
         ),
         
