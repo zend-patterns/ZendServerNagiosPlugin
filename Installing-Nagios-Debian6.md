@@ -42,7 +42,7 @@ Before continuing, you will need to set your timezone by editing the 'date.timez
 
 Use apt-get to install Nagios. Run the following command:
 
-apt-get install nagios3 nagios-plugins nagios-nrpe-plugin nagios-nrpe-server
+	apt-get install nagios3 nagios-plugins nagios-nrpe-plugin nagios-nrpe-server
 
 During the installation process, you will be asked for samba workgroup and WINS Settings.  Just leave the default settings.
 
@@ -64,7 +64,7 @@ For this tutorial, we have to install packages for both the server and client si
 To install the Zend Server Nagios plugin: 
 
 1. Unzip the application file in a directory. For example:
- /usr/local/nagiosplugin.
+ 	/usr/local/nagiosplugin.
 
 2. Open the '/usr/local/nagiosplugin/vendor/zendserverwebapi/zendserverwebapi/congif.zendserverwebapi.config.php' file, and modify the 'zsapi' part of the configuration as follows: 
 
@@ -81,42 +81,49 @@ To install the Zend Server Nagios plugin:
 
 3. You can now access the plugin from the command line. To do this, run:
 
-php /usr/local/nagiosplugin/index.php nagiosplugin clustserstatus
+	php /usr/local/nagiosplugin/index.php nagiosplugin clustserstatus
 
 ## 2. Configuring the Nagios Client ##
 
-The next step is to connect the Zend Server plugin to the Nagios server. The main operation is to define a command by adding a new definition into the nrpe-server configuration file. To do that simply edit the file */etc/nagios/nrpe.cfg*, and add a new command :
+The next step of the tutorial is connecting the Zend Server plugin to the Nagios server. The main action in this step is defining a command by adding a new definition into the 'nrpe-server' configuration file. 
 
-	# Zend server commands
+1. Edit the '/etc/nagios/nrpe.cfg' file, and add a new command:
+
+  	# Zend server commands
 	command[zs-cluster-status] = /usr/local/nagiosplugin/index.php nagiosplugin cluster status
 
-Then restart the nrpe server :
+2. Restart the nrpe server. Run:
 
 	service nagios-nrpe-server restart
 
-Now the client layer is ready to send informations to the main Nagios server. In this exemple the Nagios client can forward information about the cluster status using the command "zs-cluster-status". 
+The client layer is now ready to send information to the main Nagios server. In this example, the Nagios client can forward information about the cluster status using the "zs-cluster-status" command. 
 
-Now let see how this command will be used by the Nagios server.
+## 3. Configuring the Nagios Server ##
 
-# 3. Configuring the Nagios Server #
+We're now going to see how the "zs-cluster-status" command is used by the Nagios server.
 
-**Define command**
+**Defining the Command**
 
-The command we've just defined on the client side has to be setted on the server side. For that, edit the commands.cfg file. It is generally placed in the */etc/nagios3* directory.
+The command we've just defined on the client side has to be configured on the server side as well. 
 
-Edit the commands.cfg file and add the new command :
+1. Open the 'commands.cfg' file. It is usually located in the '/etc/nagios3' directory.
 
-	define command{
+2. Add the new command: 
+
+	define command {
         command_name    zs-cluster-status
-		command_line $USER1$/check_nrpe -H $HOSTADDRESS$ -c zs-cluster-status
-    }
+	command_line $USER1$/check_nrpe -H $HOSTADDRESS$ -c zs-cluster- status
+    	}
 
-As you can see, the command set on the client is used throught the nrpe plugin: The command setted on the server side is *nrpe_check* and not directly the zs-cluster-status.
+As you can see, the command set on the client is used with the nrpe plugin while the command set on the server side is 'nrpe_check', and not "zs-cluster-status".
 
-**Define service**
+**Defining the Service**
 
-Finally we have to define a service to use the command.
-This service will be setted for the localhost, so, we have to edit the */etc/nagios3/conf.d/localhost_nagios3.cfg* and created a new service :
+We now have to define a Nagios service that uses the command.
+
+1. Open the '/etc/nagios3/conf.d/localhost_nagios3.cfg' file.
+
+2. Create a new service :
 
 	define service {
 		use	generic-service
@@ -125,55 +132,43 @@ This service will be setted for the localhost, so, we have to edit the */etc/nag
 		check_command	zs-cluster-status
 	}
 
-Then restart the nagios Server
+3. Restart the Nagios server. Run:
 
 	service nagios3 restart
 
-The new service is now available. Check it on the Nagios web console : *http://myhost/nagios3/*. Nagios will chech its services evry 1O minutes. Be patient.
+The new service is now available. Check it on the Nagios web console, at: http://myhost/nagios3/. 
+Nagios checks its services every 1O minutes, so be patient.
 
 ## 4. Setting Zend Server Nagios Plugin Thresholds ##
 
-Nagios manage 3 levels of criticity :
+Nagios manages three severity levels:
 
 - OK
 - WARNING
 - CRITICAL
 
-The goal of this part is to show how Nagios criticity levels depend on plugin configurations.
+The goal of this step in the tutorial is to show how Nagios severity levels depend on the plugin configurations.
+As an example, we will use the plugin's "Notifications" command. 
+This command is based on Zend Server's notification system, which has its own severity levels : 0,1,2 (where 2 is the highest level of severity). 
+By default, the severity level returned to Nagios is the one associated with the notification owning the highest severity level, meaning that if a notification returned by Zend Server reaches severity level 2, a critical alert will be displayed by Nagios.
 
-As an exemple we will use the *Notifications* command of the plugin. This command is based on the notification system of Zend Server that have its own criticity level : 0,1,2 where 2 is the highest level of severity. By default the criticity level returned to Nagios is the one of the notification owning the highest severity level.
-So, if one notification returned by Zend server reach the severity level 2, a critical alert will be display by Nagios.
-This behaviour can be change by editing the *zendservernagiosplugin.config.php* file setted in */usr/local/nagiospluging/module/ZendServerNagiosPlugin/config*. If you look into this file you will find these lines :
+**Setting the ZS Notification Center Service**
 
-	/*
-     * Notifications
-     * Threshold based on the inner notification severity level
-     */
-    'notifications' => array(
-        '0' => 'NAGIOS_OK',
-        '1' => 'NAGIOS_WARNING',
-        '2' => 'NAGIOS_CRITICAL'
-     ),
+We are now going to set a new service for integrating Nagios with Zend Server's Notification Center. 
+To do this, repeat the same procedure as with the "zs-cluster-status" command:
 
-As you can see the "2" severity level of the plugin correspond to NAGIOS_CRITICAL level.
-
-
-**Set the notification monitoring service**
-
-Has you have formely do:
-
-1. Define the command in the nrpe server by editing the file /etc/nagios/nrpe.cfg :
+1. Define the command in the nrpe server by editing the '/etc/nagios/nrpe.cfg' file:
 
 		command[zs-notifications]=/usr/local/nagiosplugin/index.php nagiosplugin notifications
 
-2. Define the command in the /usr/nagios3/commands.cfg files :
+2. Define the command in the '/usr/nagios3/commands.cfg' files :
 
 		define command{
 			command_name zs-notifications
 			command_line	$USER1$/check_nrpe -H $HOSTADDRESS$ -c zs-notifications
 		}
 
-3. Define the service using this command in the /etc/nagios3/conf.d/localhost_nagios3.cfg :
+3. Define the service using this command in the '/etc/nagios3/conf.d/localhost_nagios3.cfg':
 
 		define service {
 			use	generic-service
@@ -182,39 +177,38 @@ Has you have formely do:
 			check_command	zs-notifications
 		}
 
-After restarted properly nrpe-server and nagios, the new service is fully available.
+4. Restart the nrpe-server and Nagios.
+ 
+The new service is fully available.
 
-**Generate a notification**
+**Generating a Notification**
 
-In the Zend Server UI, modify and save a PHP directives value, but do not restart the server.
+Next, let's test to see how the new service is integrated with the Zend Server Notification Center.
 
-Then go on the Nagios UI, you will see a warning alert "Restart is required" attached to the ZS Notifications center service.
+1. Access the Zend Server UI.
 
-**Change the criticity level**
+2. Modify the value of a PHP directive, save the changes, but do not restart the server.
 
-Now we are going to change the criticity level of the Nagios alert for this service.
+3. Access the Nagios UI.
 
-Edit the zendservernagiosplugin.config.php. You will found it in /usr/local/nagiosplugin/module/ZednServerNagiosPlugin/config.
-Look into the file and modify the "notifications" threshold parameters :
+You will see a warning alert "Restart is required" attached to the Zend Server Notifications Center service.
 
-	/*
-     * Notifications
-     * Threshold based on the inner notification severity level
-     */
-    'notifications' => array(
-            '0' => 'NAGIOS_OK',
-            '1' => 'NAGIOS_WARNING', 
-            '2' => 'NAGIOS_CRITICAL' 
-    ),
+**Changing the Severity Level**
 
-Change the line 
+Our final step is to change the severity level of the Nagios alert for this service.
+
+1. Open the 'zendservernagiosplugin.config.php' file (located in '/usr/local/nagiosplugin/module/ZednServerNagiosPlugin/config').
+2. Modify the "notifications" threshold parameters:
+
+Change 
 
 	'1' => 'NAGIOS_WARNING',
+
 into 
 
 	'1' => 'NAGIOS_CRITICAL',
 
-After the next Nagios check the criticity level of ZS Notifications center will be CRITICAL instead of WARNING. Check it on Nagios UI.
-
+After the next Nagios check, the severity level of the ZS Notifications center will be CRITICAL instead of WARNING. 
+Access the Nagios UI to verify.
 
 
