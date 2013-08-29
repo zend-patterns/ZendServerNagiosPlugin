@@ -71,10 +71,10 @@ return array (
             'file' => $_SERVER['HOME'].'/.zsapi.ini',
             // Default Zend Server Target
             'default_target' => array(
-                'zsurl' => 'http://localhost:10081',
-                'zskey' => 'zf',
-                'zssecret' => 'a1c5b69aa706450c6715fd817b5c7cd643144bb2c70d1e4d34c8a0f3098e2c65',
-                'zs-version' => '6.0.1',
+                'zsurl' => 'http://192.168.220.151:10081',
+                'zskey' => 'admin',
+                'zssecret' => 'd2cc2bd7a8252700b51867ce1c7195ba97300ab42e3a400465c495fa91546200',
+                'zs-version' => '6.1',
             ),
             // HTTP Client
             'client' => array(
