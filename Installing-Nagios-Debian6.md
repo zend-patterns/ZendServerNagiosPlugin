@@ -68,20 +68,24 @@ To install the Zend Server Nagios plugin:
 
 2. Open the '/usr/local/nagiosplugin/vendor/zendserverwebapi/zendserverwebapi/congif.zendserverwebapi.config.php' file, and modify the 'zsapi' part of the configuration as follows: 
 
-	//Zend Server API specific Settings
-    	'zsapi' => array (
-    	// Default Zend Server Target
-    		'default_target' => array(
-    			'zsurl' => [Zend Server host],
-    			'zskey' => '[API Key name]',
-    			'zssecret' => '[API secret key]',
-    			'zs-version' => '[Zedn Server version]',
+		//Zend Server API specific Settings
+    		'zsapi' => array (
+    		// Default Zend Server Target
+    			'default_target' => array(
+    				'zsurl' => [Zend Server host],
+    				'zskey' => '[API Key name]',
+    				'zssecret' => '[API secret key]',
+    				'zs-version' => '[Zedn Server version]',
+    			),
     		),
-    	),
 
 3. You can now access the plugin from the command line. To do this, run:
 
-	php /usr/local/nagiosplugin/index.php nagiosplugin clustserstatus
+		php /usr/local/nagiosplugin/index.php nagiosplugin clustserstatus
+
+4. Set index.php as executable
+
+		chmod +x /usr/local/nagiosplugin/index.php
 
 ## 2. Configuring the Nagios Client ##
 
@@ -89,12 +93,12 @@ The next step of the tutorial is connecting the Zend Server plugin to the Nagios
 
 1. Edit the '/etc/nagios/nrpe.cfg' file, and add a new command:
 
-  	# Zend server commands
-	command[zs-cluster-status] = /usr/local/nagiosplugin/index.php nagiosplugin cluster status
+  		# Zend server commands
+		command[zs-cluster-status] = /usr/local/nagiosplugin/index.php nagiosplugin cluster status
 
 2. Restart the nrpe server. Run:
 
-	service nagios-nrpe-server restart
+		service nagios-nrpe-server restart
 
 The client layer is now ready to send information to the main Nagios server. In this example, the Nagios client can forward information about the cluster status using the "zs-cluster-status" command. 
 
@@ -110,9 +114,9 @@ The command we've just defined on the client side has to be configured on the se
 
 2. Add the new command: 
 
-	define command {
-        command_name    zs-cluster-status
-	command_line $USER1$/check_nrpe -H $HOSTADDRESS$ -c zs-cluster- status
+		define command {
+        	command_name    zs-cluster-status
+			command_line $USER1$/check_nrpe -H $HOSTADDRESS$ -c zs-cluster- status
     	}
 
 As you can see, the command set on the client is used with the nrpe plugin while the command set on the server side is 'nrpe_check', and not "zs-cluster-status".
@@ -125,16 +129,16 @@ We now have to define a Nagios service that uses the command.
 
 2. Create a new service :
 
-	define service {
-		use	generic-service
-		host_name	localhost
-		service_description	ZS Cluster Status
-		check_command	zs-cluster-status
-	}
+		define service {
+			use	generic-service
+			host_name	localhost
+			service_description	ZS Cluster Status
+			check_command	zs-cluster-status
+		}
 
 3. Restart the Nagios server. Run:
 
-	service nagios3 restart
+		service nagios3 restart
 
 The new service is now available. Check it on the Nagios web console, at: http://myhost/nagios3/. 
 Nagios checks its services every 1O minutes, so be patient.
