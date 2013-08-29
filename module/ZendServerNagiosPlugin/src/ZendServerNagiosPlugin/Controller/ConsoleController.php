@@ -1,8 +1,5 @@
 <?php
 namespace ZendServerNagiosPlugin\Controller;
-use Zend\ModuleManager\Feature\ConsoleBannerProviderInterface;
-use Zend\ModuleManager\Feature\ConsoleUsageProviderInterface;
-use Zend\Console\Adapter\AdapterInterface;
 
 /**
  * Nagios plugins controller

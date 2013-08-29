@@ -18,6 +18,8 @@
 
 $zf2Path = false;
 
+if (file_exists('win.zf2.conf.php')) include 'win.zf2.conf.php';
+
 if (getenv('ZF2_PATH')) {      // Support for ZF2_PATH environment variable or git submodule
     $zf2Path = getenv('ZF2_PATH');
 } elseif (get_cfg_var('zf2_path')) { // Support for zf2_path directive value

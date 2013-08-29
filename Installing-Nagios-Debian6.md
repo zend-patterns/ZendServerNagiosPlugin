@@ -77,6 +77,10 @@ Now your able to reach the plugin in the command line :
 
 	php /usr/local/nagiosplugin/index.php nagiosplugin clustserstatus
 
+Finally, make index.php executable :
+
+	chmod +x /usr/local/nagiosplugin/index.php
+
 
 **Deploy the plugin application using Zend deployment**
 

@@ -86,5 +86,28 @@ abstract class AbstractNagiosController extends AbstractActionController
 	    }
 	    return $methodResponse;
 	}
+	
+	/**
+	 * Write in console
+	 * @param string $text
+	 * @param string $color
+	 * @param string $bgcolor
+	 */
+	protected function consoleWrite($text,$color = null, $bgcolor= null)
+	{
+	    $console = $this->getServiceLocator()->get('console');
+	    $console->write($text,$color = null, $bgcolor= null);
+	}
+	/**
+	 * Write in console
+	 * @param string $text
+	 * @param string $color
+	 * @param string $bgcolor
+	 */
+	protected function consoleWriteLn($text,$color = null, $bgcolor= null)
+	{
+	    $console = $this->getServiceLocator()->get('console');
+	    $console->writeLine($text,$color = null, $bgcolor= null);
+	}
 
 }
