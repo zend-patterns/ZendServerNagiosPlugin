@@ -1,11 +1,7 @@
 {
 	"name": "Zend Server Nagios plugin",
 	"version": "1.0",
-	"detail" : "A Zend Server Nagios plugin",
+	"details" : "A Zend Server Nagios plugin",
 	"shortDescription" : "A Nagios plugin for Zend Server monitoring ",
-	"categories": ["monitoring", "nagios"],
-	"repository" : {
-		"type" : "github",
-		"url" : "https://github.com/zendtech/ZendServerNagiosPlugin.git"
-	}
+	"categories": ["monitoring", "nagios"]
 }
