@@ -3,7 +3,8 @@ return array(
         'controllers' => array(
                 'invokables' => array(
                         'ConsoleController' => 'ZendServerNagiosPlugin\Controller\ConsoleController',
-                        'CoreController' => 'ZendServerNagiosPlugin\Controller\CoreController'
+                        'CoreController' => 'ZendServerNagiosPlugin\Controller\CoreController',
+                        'FrontendController' => 'ZendServerNagiosPlugin\Controller\FrontendController'
                 )
         ),
         'console' => array(
@@ -82,10 +83,10 @@ return array(
                          */
                         'install' => array(
                                 'options' => array(
-                                        'route' => 'nagiosplugin install [--zsurl=] [--zskey=] [--zssecret=]',
+                                        'route' => 'nagiosplugin install',
                                         'defaults' => array(
                                                 'action' => 'install',
-                                                'controller' => 'CoreController',
+                                                'controller' => 'FrontendController',
                                         ),
                                         'usage' => 'Install the plugin (use it as root)'
                                 )

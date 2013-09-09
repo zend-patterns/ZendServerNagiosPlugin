@@ -109,5 +109,14 @@ abstract class AbstractNagiosController extends AbstractActionController
 	    $console = $this->getServiceLocator()->get('console');
 	    $console->writeLine($text,$color = null, $bgcolor= null);
 	}
+	
+	/**
+	 * Getting console object
+	 * @return Ambigous <object, multitype:, stdClass>
+	 */
+	protected function getConsole()
+	{
+	    return $this->getServiceLocator()->get('console');
+	}
 
 }

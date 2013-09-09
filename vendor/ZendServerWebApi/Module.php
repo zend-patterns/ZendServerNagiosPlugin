@@ -135,7 +135,6 @@ class Module implements ConfigProviderInterface, AutoloaderProviderInterface,
             return;
         $serviceManager = $event->getApplication()->getServiceManager();
         $appConfig = $serviceManager->get('config');
-        //$targetConfig = array();
         if ($match->getParam('no-target')) return;
         // Set a default target
         if (isset($appConfig['zsapi']['default_target']))

@@ -132,7 +132,7 @@ return array (
     'file' => '/.zsapi.ini',
     'default_target' => 
     array (
-      'zsurl' => 'http://localhost:10081',
+      'zsurl' => 'http://localhost:10082',
       'zskey' => 'admin',
       'zssecret' => 'd2cc2bd7a8252700b51867ce1c7195ba97300ab42e3a400465c495fa91546200',
     ),
