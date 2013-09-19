@@ -66,18 +66,21 @@ To install the Zend Server Nagios plugin:
 1. Unzip the application file in a directory. For example:
  	/usr/local/nagiosplugin.
 
-2. Open the '/usr/local/nagiosplugin/vendor/zendserverwebapi/zendserverwebapi/congif.zendserverwebapi.config.php' file, and modify the 'zsapi' part of the configuration as follows: 
+2. Create a '/usr/local/nagiosplugin/config/autoload/local.php' file, and set the configuration as follows: 
 
+		<?php
 		//Zend Server API specific Settings
+		return array(
     		'zsapi' => array (
     		// Default Zend Server Target
     			'default_target' => array(
     				'zsurl' => [Zend Server host],
     				'zskey' => '[API Key name]',
     				'zssecret' => '[API secret key]',
-    				'zs-version' => '[Zedn Server version]',
+    				'zs-version' => '[Zend Server version]',
     			),
     		),
+		);
 
 3. You can now access the plugin from the command line. To do this, run:
 
