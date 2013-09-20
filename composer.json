@@ -1,0 +1,19 @@
+{
+	"name" : "zenddevops\\zendservernagiosplugin",
+	"description" : "Zend Server Nagios pugin",
+	"keywords" : [
+		"zf2",
+		"zend server",
+		"devops",
+		"nagios",
+		"plugin"
+	],
+	"license" : [
+		"BSD-3-Clause"
+	],
+	"require" : {
+		"php" : ">=5.3.3",
+		"zenddevops/webapi" : ">=master-dev@dev"
+	},
+	"minimum-stability" : "alpha"
+}

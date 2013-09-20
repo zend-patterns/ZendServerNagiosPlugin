@@ -1,15 +1,19 @@
 <?php
 namespace ZendServerNagiosPlugin;
+
 use Zend\ModuleManager\Feature\AutoloaderProviderInterface;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
 use Zend\ModuleManager\Feature\ConsoleBannerProviderInterface;
 use Zend\ModuleManager\Feature\ConsoleUsageProviderInterface;
 use Zend\Console\Adapter\AdapterInterface;
+use Zend\ModuleManager\Feature\BootstrapListenerInterface;
+use Zend\Config\Config;
+use Zend\Config\Reader\Ini;
+use Zend\EventManager\EventInterface;
 
 class Module implements ConfigProviderInterface, AutoloaderProviderInterface, 
         ConsoleBannerProviderInterface, ConsoleUsageProviderInterface
 {
-
     /**
      * (non-PHPdoc)
      * 
@@ -17,7 +21,11 @@ class Module implements ConfigProviderInterface, AutoloaderProviderInterface,
      */
     public function getConfig ()
     {
-        return include __DIR__ . '/config/zendservernagiosplugin.config.php';
+        $currentConfig = include __DIR__ . '/config/zendservernagiosplugin.config.php';
+        $additionalConfigFile = new Ini();
+        $additionalConfig = $additionalConfigFile->fromFile(__DIR__ . '/../../config/config.ini');
+        $currentConfig = array_merge($currentConfig, $additionalConfig);
+        return $currentConfig;
     }
 
     /**
