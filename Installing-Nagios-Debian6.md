@@ -66,21 +66,18 @@ To install the Zend Server Nagios plugin:
 1. Unzip the application file in a directory. For example:
  	/usr/local/nagiosplugin.
 
-2. Create a '/usr/local/nagiosplugin/config/autoload/local.php' file, and set the configuration as follows: 
+2. Create a '/usr/local/nagiosplugin/config/config.ini' file, and set the configuration as follows: 
 
-		<?php
-		//Zend Server API specific Settings
-		return array(
-    		'zsapi' => array (
-    		// Default Zend Server Target
-    			'default_target' => array(
-    				'zsurl' => [Zend Server host],
-    				'zskey' => '[API Key name]',
-    				'zssecret' => '[API secret key]',
-    				'zs-version' => '[Zend Server version]',
-    			),
-    		),
-		);
+		;--------------------------------------------------------------------
+		;	Zend server Webd Api configuration
+		;--------------------------------------------------------------------
+		zsapi.default_target.zsurl=http://192.168.220.151:10081 // Zend Server Url
+		zsapi.default_target.zskey=admin 						// Web Api key name
+		zsapi.default_target.zssecret=d2cc2bd7a8252700b5.. 		// Web Api secret Key
+		zsapi.default_target.zsversion=6.1 						//Zend Server version
+
+		nagios.plugin.directory = /usr/local/nagiosplugin		// Directiry where the plugin is installed
+		nagios.client.config.directory = /etc/nagios			// Configuration directory of nagios client
 
 3. You can now access the plugin from the command line. To do this, run:
 
@@ -90,24 +87,25 @@ To install the Zend Server Nagios plugin:
 
 		chmod +x /usr/local/nagiosplugin/index.php
 
-## 2. Configuring the Nagios Client ##
+5. Run the installer a root :
 
-The next step of the tutorial is connecting the Zend Server plugin to the Nagios server. The main action in this step is defining a command by adding a new definition into the 'nrpe-server' configuration file. 
+		php /usr/local/nagiosplugin/index.php nagiosplugin install
 
-1. Edit the '/etc/nagios/nrpe.cfg' file, and add a new command:
+	This will set up the /etc/nagios/nrpe.cfg, add the Zend Server specifics command to nrpe server and restart the nre-server.
+	Follow the list of commands : 
 
-  		# Zend server commands
-		command[zs-cluster-status] = /usr/local/nagiosplugin/index.php nagiosplugin cluster status
+		command[zs-clusterstatus]=/usr/local/nagiosplugin/index.php nagiosplugin clusterstatus
+		command[zs-audittrail]=/usr/local/nagiosplugin/index.php nagiosplugin audittrail
+		command[zs-notifications]=/usr/local/nagiosplugin/index.php nagiosplugin notifications
+		command[zs-licence]=/usr/local/nagiosplugin/index.php nagiosplugin licence
+		command[zs-events]=/usr/local/nagiosplugin/index.php nagiosplugin events
 
-2. Restart the nrpe server. Run:
-
-		service nagios-nrpe-server restart
-
-The client layer is now ready to send information to the main Nagios server. In this example, the Nagios client can forward information about the cluster status using the "zs-cluster-status" command. 
+	Your plugin is ready to send information to the Nagios server.
+ 
 
 ## 3. Configuring the Nagios Server ##
 
-We're now going to see how the "zs-cluster-status" command is used by the Nagios server.
+We're now going to see how the "zs-clusterstatus" command is used by the Nagios server.
 
 **Defining the Command**
 
@@ -118,7 +116,7 @@ The command we've just defined on the client side has to be configured on the se
 2. Add the new command: 
 
 		define command {
-        	command_name    zs-cluster-status
+        	command_name    zs-clusterstatus
 			command_line $USER1$/check_nrpe -H $HOSTADDRESS$ -c zs-cluster- status
     	}
 
@@ -162,20 +160,16 @@ By default, the severity level returned to Nagios is the one associated with the
 **Setting the ZS Notification Center Service**
 
 We are now going to set a new service for integrating Nagios with Zend Server's Notification Center. 
-To do this, repeat the same procedure as with the "zs-cluster-status" command:
+To do this, repeat the same procedure as with the "zs-clusterstatus" command:
 
-1. Define the command in the nrpe server by editing the '/etc/nagios/nrpe.cfg' file:
-
-		command[zs-notifications]=/usr/local/nagiosplugin/index.php nagiosplugin notifications
-
-2. Define the command in the '/usr/nagios3/commands.cfg' files :
+1. Define the command in the '/usr/nagios3/commands.cfg' files :
 
 		define command{
 			command_name zs-notifications
 			command_line	$USER1$/check_nrpe -H $HOSTADDRESS$ -c zs-notifications
 		}
 
-3. Define the service using this command in the '/etc/nagios3/conf.d/localhost_nagios3.cfg':
+2. Define the service using this command in the '/etc/nagios3/conf.d/localhost_nagios3.cfg':
 
 		define service {
 			use	generic-service
@@ -184,7 +178,7 @@ To do this, repeat the same procedure as with the "zs-cluster-status" command:
 			check_command	zs-notifications
 		}
 
-4. Restart the nrpe-server and Nagios.
+3. Restart the Nagios.
  
 The new service is fully available.
 
@@ -218,4 +212,19 @@ into
 After the next Nagios check, the severity level of the ZS Notifications center will be CRITICAL instead of WARNING. 
 Access the Nagios UI to verify.
 
+**Commands parameters**
+
+Audittrail and events commands returning one or more item at the same time. Generaly, the information actually returned to Nagios is the one having the highest severity level.Therefore, accuracy of the monitoring depends on the number of items returned at the same time. 
+
+To limit this number of items computed by Nagios you can specify two additional parameters :
+
+- delay : time interval to be used to fetch items. Only items sent out during the last "delay" seconds will be returned.
+- limit : maximal number of items returned 
+
+To configure these parameter just add theme in the commd.cfg file :
+
+	define command{
+		command_name zs-events
+		command_line	$USER1$/check_nrpe -H $HOSTADDRESS$ -c zs-events --delay=10 --limit=5
+	}
 
