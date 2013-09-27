@@ -79,7 +79,7 @@ class ConsoleController extends AbstractNagiosController
         if (! $auditTrail)
             return;
         $delay = $this->params('delay', 10);
-        $statusMessage = '';
+        $statusMessage = 'No audit trail item';
         $severity = self::NAGIOS_OK;
         $threshold = $this->getNagiosThresholdConfig();
         foreach ($auditTrail->responseData->auditMessages->auditMessage as $auditMessage) {
@@ -157,7 +157,7 @@ class ConsoleController extends AbstractNagiosController
         if (! $events)
             return;
         $delay = $this->params('delay', 10);
-        $statusMessage = '';
+        $statusMessage = 'No event during last ' . $delay . ' second(s)';
         $severity = self::NAGIOS_OK;
         $threshold = $this->getNagiosThresholdConfig();
         foreach ($events->responseData->issues->issue as $issue) {

@@ -60,7 +60,6 @@ return array(
                                         'options' => array(
                                                 'route' => 'nagiosplugin licence',
                                                 'defaults' => array(
-                                                        'controller' => 'ZendServerNagiosPlugin\Controller\Console',
                                                         'action' => 'licence'
                                                 ),
                                                 'usage' => 'Check licence validity'
