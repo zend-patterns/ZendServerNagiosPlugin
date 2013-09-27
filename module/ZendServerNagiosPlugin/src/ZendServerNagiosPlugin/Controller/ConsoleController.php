@@ -49,7 +49,7 @@ class ConsoleController extends AbstractNagiosController
             $this->setStatusMessage('No notifications');
             return;
         }
-        $statusMessage = '';
+        $statusMessage = 'No notifications';
         $threshold = $this->getNagiosThresholdConfig();
         $severity = self::NAGIOS_OK;
         foreach ($notifications->responseData->notifications->notification as $notification) {
