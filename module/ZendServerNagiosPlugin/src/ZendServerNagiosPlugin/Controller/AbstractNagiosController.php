@@ -118,5 +118,26 @@ abstract class AbstractNagiosController extends AbstractActionController
 	{
 	    return $this->getServiceLocator()->get('console');
 	}
+	
+	/**
+	 * Get Nagios client plugin configuration
+	 * @return array
+	 */
+	protected function getNagiosConfig()
+	{
+	    $config =  $this->getServiceLocator()->get('config');
+	    return $config['nagios'];
+	}
+	
+	/**
+	 * Return command routes
+	 * @return array
+	 */
+	protected function getCommandRoutes()
+	{
+	    $config = $this->getServiceLocator()->get('config');
+	    $commandRoutes = $config['console']['router']['routes'];
+	    return $commandRoutes;
+	}
 
 }

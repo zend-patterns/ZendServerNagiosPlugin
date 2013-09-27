@@ -20,41 +20,35 @@ class FrontendController extends AbstractNagiosController
      */
     public function installAction()
     {
-        $availableZsVersions = array(
-                    '0' => '5.1',
-                    '1' => '5.5',
-                    '2' => '5.6',
-                    '3' => '6.0',
-                    '4' => '6.1'
-                );
-        //Set up web api key.
-        $zsurl = Line::prompt('Zend Server url : ',false,100);
-        $zskey = Line::prompt('Zend Sephprver web API key name : ',false,100);
-        $zssecret = Line::prompt('Zend Server web API key secret : ',false,100);
-        $zsversion = Select::prompt('Zend Server version : ',$availableZsVersions,false,false);
-        $zsversion = $availableZsVersions[$zsversion];
-        $config = new Config(array(
-                'zsapi' => array(
-                    'default_target' => array(
-                        'zsurl' => $zsurl,
-                        'zskey' => $zskey,
-                        'zssecret' => $zssecret,
-                        'zsversion' => $zsversion,     
-                    ),
-                ),
-        ));
-        $this->consoleWrite('Setting Web API key...');
-        $configWritter = new PhpArray();
-        $localConfigFile = __DIR__ .'/../../../../../config/autoload/zsapi.local.php';
-        $configWritter->toFile($localConfigFile, $config);
-        $this->consoleWriteLn('[OK]', ColorInterface::GREEN);
+        $this->setNrpeConfig();
+        return true;
     }
     
     /**
-     * NRPE Configuration for Linux environment
+     * Add Zedn Server Command to nrpe.cfg
+     * 
+     * And restart nrpe server.
      */
-    protected function nrpeConfLinux()
+    protected function setNrpeConfig()
     {
-        
+        $this->consoleWrite('Setting nrpe config...');
+        $nagiosConfig = $this->getNagiosConfig();
+        $commandString = '#Zend Server plugin commands' . "\n";
+        foreach ($this->getCommandRoutes() as $route => $config){
+            $commandName = $config['options']['route'];
+            $commandArray = explode(' ', $commandName);
+            if (trim($commandArray[0]) != 'nagiosplugin') continue;
+            $commandName = trim($commandArray[1]);
+            if ($commandName == 'install') continue;
+            $commandName = preg_replace('@\[[^[]]*\]@', '', $commandName);
+            $commandLine  = 'command[zs-' . $commandName . ']=';
+            $commandLine .= $nagiosConfig['plugin']['directory'];
+            $commandLine .= '/index.php nagiosplugin ' . $commandName;
+            $commandString .= $commandLine ."\n";
+        }
+        $nrepConfigFile = $nagiosConfig['client']['config']['directory'] . '/nrpe.cfg';
+        file_put_contents($nrepConfigFile, $commandString,FILE_APPEND);
+        exec('service nagios-nrpe-server restart');
+        $this->consoleWriteLn('[OK]', ColorInterface::GREEN);
     }
 }
