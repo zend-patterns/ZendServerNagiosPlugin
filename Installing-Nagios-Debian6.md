@@ -122,6 +122,8 @@ The command we've just defined on the client side has to be configured on the se
 
 As you can see, the command set on the client is used with the nrpe plugin while the command set on the server side is 'nrpe_check', and not "zs-cluster-status".
 
+A command.cfg template you could copy-paste to the main commad.cfg file is deliver with plugin in the /templates directory.
+
 **Defining the Service**
 
 We now have to define a Nagios service that uses the command.
@@ -143,6 +145,8 @@ We now have to define a Nagios service that uses the command.
 
 The new service is now available. Check it on the Nagios web console, at: http://myhost/nagios3/. 
 Nagios checks its services every 1O minutes, so be patient.
+
+A services configuration template you could copy-paste to the main file is deliver with plugin in the /templates/conf.d directory.
 
 ## 4. Setting Zend Server Nagios Plugin Thresholds ##
 
