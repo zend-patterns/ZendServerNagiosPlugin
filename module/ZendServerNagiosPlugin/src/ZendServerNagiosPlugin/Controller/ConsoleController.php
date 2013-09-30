@@ -78,8 +78,8 @@ class ConsoleController extends AbstractNagiosController
                 ));
         if (! $auditTrail)
             return;
-        $delay = $this->params('delay', 10);
-        $statusMessage = 'No audit trail item';
+        //$delay = (int)$this->params('delay', 3600); // not used
+        $statusMessage = '';
         $severity = self::NAGIOS_OK;
         $threshold = $this->getNagiosThresholdConfig();
         foreach ($auditTrail->responseData->auditMessages->auditMessage as $auditMessage) {
@@ -88,8 +88,6 @@ class ConsoleController extends AbstractNagiosController
             $interface = (string) $auditMessage->requestInterface;
             $type = (string) $auditMessage->auditType;
             $audittime = strtotime($creationTime);
-            if ($audittime < time() - $delay)
-                continue;
             $statusMessage .= $user . " - ";
             $statusMessage .= $interface . " - ";
             $statusMessage .= $type . " - ";
@@ -102,6 +100,7 @@ class ConsoleController extends AbstractNagiosController
             if ($nagiosSeverity > $severity)
                 $severity = $nagiosSeverity;
         }
+        if ($statusMessage == '') $statusMessage = 'No audit trail item';
         $this->setStatusMessage($statusMessage);
         $this->setStatus($severity);
     }
