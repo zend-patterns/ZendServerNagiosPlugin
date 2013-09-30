@@ -56,13 +56,13 @@ return array(
                         /*
                          * Get Licence validity
                          */
-                        'licence' => array(
+                        'license' => array(
                                         'options' => array(
-                                                'route' => 'nagiosplugin licence',
+                                                'route' => 'nagiosplugin license',
                                                 'defaults' => array(
-                                                        'action' => 'licence'
+                                                        'action' => 'license'
                                                 ),
-                                                'usage' => 'Check licence validity'
+                                                'usage' => 'Check lisence validity'
                                         )
                                 ),
                         /*
@@ -115,9 +115,9 @@ return array(
                 ),
         /*
          * Licence validity
-         * Based on licence status
+         * Based on license status
          */
-        'licence' => array(
+        'license' => array(
                         'TYPE_LICENSE_INVALID' => 'NAGIOS_CRITICAL',
                         'TYPE_LICENSE_ABOUT_TO_EXPIRE' => 'NAGIOS_CRITICAL',
                         'TYPE_LICENSE_ABOUT_TO_EXPIRE_15' => 'NAGIOS_CRITICAL',

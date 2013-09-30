@@ -107,15 +107,15 @@ class ConsoleController extends AbstractNagiosController
     }
 
     /**
-     * Check validity and expiration licence
+     * Check validity and expiration license
      */
-    public function licenceAction ()
+    public function licenseAction ()
     {
         $notifications = $this->sendApiMethod('getNotifications');
         if (! $notifications)
             return;
         $notificationsCount = $notifications->responseData->notifications->count();
-        $statusMessage = 'Licence Ok';
+        $statusMessage = 'License Ok';
         if ($notificationsCount == 0) {
             $this->setStatus(self::NAGIOS_OK);
             $this->setStatusMessage($statusMessage);
@@ -123,7 +123,7 @@ class ConsoleController extends AbstractNagiosController
         }
         $threshold = $this->getNagiosThresholdConfig();
         $severity = self::NAGIOS_OK;
-        $licenceTypeNotification = array(
+        $licenseTypeNotification = array(
                 'TYPE_LICENSE_INVALID' => 26,
                 'TYPE_LICENSE_ABOUT_TO_EXPIRE' => 27,
                 'TYPE_LICENSE_ABOUT_TO_EXPIRE_45' => 30,
@@ -132,9 +132,9 @@ class ConsoleController extends AbstractNagiosController
         $nagiosSeverity = self::NAGIOS_OK;
         foreach ($notifications->responseData->notifications->notification as $notification) {
             $type = (int) $notification->type;
-            if (! in_array($type, $licenceTypeNotification))
+            if (! in_array($type, $licenseTypeNotification))
                 continue;
-            $typeKey = current(array_keys($licenceTypeNotification, $type));
+            $typeKey = current(array_keys($licenseTypeNotification, $type));
             $severity = constant('self::' . $threshold[$typeKey]);
             $statusMessage = (string) $notification->title;
         }

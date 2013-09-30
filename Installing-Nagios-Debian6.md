@@ -22,7 +22,7 @@ Available commands are :
 - *clusterstatus* : monitors the percentage of cluster nodes currently down 
 - *audittrail* : monitors Zend Server Audit Trail records
 - *notifications* : monitors Zend Server notifications
-- *licence* : monitors licence expiration delay
+- *license* : monitors license expiration delay
 - *events* : monitors Zend Server monitoring events
 
 ## 1. Installing your System ##
@@ -97,7 +97,7 @@ To install the Zend Server Nagios plugin:
 		command[zs-clusterstatus]=/usr/local/nagiosplugin/index.php nagiosplugin clusterstatus
 		command[zs-audittrail]=/usr/local/nagiosplugin/index.php nagiosplugin audittrail
 		command[zs-notifications]=/usr/local/nagiosplugin/index.php nagiosplugin notifications
-		command[zs-licence]=/usr/local/nagiosplugin/index.php nagiosplugin licence
+		command[zs-license]=/usr/local/nagiosplugin/index.php nagiosplugin license
 		command[zs-events]=/usr/local/nagiosplugin/index.php nagiosplugin events
 
 	Your plugin is ready to send information to the Nagios server.

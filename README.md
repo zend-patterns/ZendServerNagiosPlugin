@@ -44,9 +44,9 @@ __notifications (no parmeters)__ :
 This probe look into the current notifications sent by the cluster.
 The severity level is based on the severity of the most critical notification.
 
-__licence (no parameter)__ :
-This probe check the licence validity.
-The severity level is based on the licence time validity remaining
+__license (no parameter)__ :
+This probe check the license validity.
+The severity level is based on the license time validity remaining
 
 __events [--delay=] [--limit=]__ :
 Return the severity of the last monitor events.
