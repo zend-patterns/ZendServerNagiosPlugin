@@ -71,13 +71,23 @@ To install the Zend Server Nagios plugin:
 		;--------------------------------------------------------------------
 		;	Zend server Webd Api configuration
 		;--------------------------------------------------------------------
-		zsapi.default_target.zsurl=http://192.168.220.151:10081 // Zend Server Url
-		zsapi.default_target.zskey=admin 						// Web Api key name
-		zsapi.default_target.zssecret=d2cc2bd7a8252700b5.. 		// Web Api secret Key
-		zsapi.default_target.zsversion=6.1 						//Zend Server version
+		;Zend Server Url
+		zsapi.default_target.zsurl=http://192.168.220.151:10081/ZendServer
 
-		nagios.plugin.directory = /usr/local/nagiosplugin		// Directiry where the plugin is installed
-		nagios.client.config.directory = /etc/nagios			// Configuration directory of nagios client
+		;Web Api key name
+		zsapi.default_target.zskey=admin
+
+		;Web Api secret Key
+		zsapi.default_target.zssecret=d2cc2bd7a8252700b5..
+
+		;Zend Server version
+		zsapi.default_target.zsversion=6.1
+
+		;Directory where the plugin is installed
+		nagios.plugin.directory = /usr/local/nagiosplugin
+
+		;Configuration directory of nagios client
+		nagios.client.config.directory = /etc/nagios
 
 3. You can now access the plugin from the command line. To do this, run:
 
