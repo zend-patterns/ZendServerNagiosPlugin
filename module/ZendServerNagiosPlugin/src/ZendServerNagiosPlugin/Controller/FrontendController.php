@@ -31,6 +31,7 @@ class FrontendController extends AbstractNagiosController
      */
     protected function setNrpeConfig()
     {
+    	$nagiosDir = $this->getParam('nagiosDir','/etc/nagios');
         $this->consoleWrite('Setting nrpe config...');
         $nagiosConfig = $this->getNagiosConfig();
         $commandString = '#Zend Server plugin commands' . "\n";
@@ -46,7 +47,7 @@ class FrontendController extends AbstractNagiosController
             $commandLine .= '/index.php nagiosplugin ' . $commandName;
             $commandString .= $commandLine ."\n";
         }
-        $nrepConfigFile = $nagiosConfig['client']['config']['directory'] . '/nrpe.cfg';
+        $nrepConfigFile = $nagiosDir . '/nrpe.cfg';
         file_put_contents($nrepConfigFile, $commandString,FILE_APPEND);
         exec('service nagios-nrpe-server restart');
         $this->consoleWriteLn('[OK]', ColorInterface::GREEN);

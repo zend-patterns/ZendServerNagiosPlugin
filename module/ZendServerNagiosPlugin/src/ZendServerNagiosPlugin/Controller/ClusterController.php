@@ -2,9 +2,10 @@
 namespace ZendServerNagiosPlugin\Controller;
 
 /**
- * Nagios plugins controller
+ * Nagios plugins controller dedicated to cluster-wide probes
  */
-class ConsoleController extends AbstractNagiosController 
+
+class ClusterController extends AbstractNagiosController 
 {
     /**
      * Check how many nodes are up in the cluster
@@ -31,9 +32,66 @@ class ConsoleController extends AbstractNagiosController
                 $severity = constant('self::' . $nagiosSeverityCode);
         }
         $this->setStatus($severity);
-        $this->setStatusMessage(
-                number_format($errorRate, 2) . '% of nodes are down');
+        $this->setStatusMessage(number_format($errorRate, 2) . '% of nodes are down');
     }
+    
+    /**
+     * Check for the last audi trail event on the current node
+     * Nagios severity level depends on the audit type.
+     */
+    public function audittrailAction ()
+    {
+    	$auditTrail = $this->sendApiMethod('auditGetList',
+    			array(
+    					'order' => 'creation_time',
+    					'direction' => 'ASC',
+    					'filters' => array(
+    							'from' => $this->getLastNodeTouch(),
+    							'to' => time()
+    					)
+    			)
+    	);
+    	$this->nodeTouch();
+    	if (! $auditTrail) return;
+    	$statusMessage = '';
+    	$severity = self::NAGIOS_OK;
+    	$threshold = $this->getNagiosThresholdConfig();
+    	foreach ($auditTrail->responseData->auditMessages->auditMessage as $auditMessage) {
+    		$creationTime = (string) $auditMessage->creationTime;
+    		$user = (string) $auditMessage->username;
+    		$interface = (string) $auditMessage->requestInterface;
+    		$type = (string) $auditMessage->auditType;
+    		$audittime = strtotime($creationTime);
+    		$statusMessage .= $user . " - ";
+    		$statusMessage .= $interface . " - ";
+    		$statusMessage .= $type . " - ";
+    		$statusMessage .= $creationTime;
+    		$statusMessage .= "\n";
+    		$nagiosSeverity = self::NAGIOS_OK;
+    		if (isset($threshold[$type])) {
+    			$nagiosSeverity = constant('self::' . $threshold[$type]);
+    		}
+    		if ($nagiosSeverity > $severity)
+    			$severity = $nagiosSeverity;
+    	}
+    	if ($statusMessage == '') $statusMessage = 'No audit trail item';
+    	$this->setStatusMessage($statusMessage);
+    	$this->setStatus($severity);
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
     /**
      * Check for notifications
@@ -64,49 +122,7 @@ class ConsoleController extends AbstractNagiosController
         $this->setStatus($severity);
     }
 
-    /**
-     * Check for the last audi trail event on the current node
-     * Nagios severity level depends on the audit type.
-     */
-    public function audittrailAction ()
-    {
-        $this->nodeTouch();
-        $auditTrail = $this->sendApiMethod('auditGetList', 
-                array(
-                        'order' => 'creation_time',
-                        'direction' => 'ASC',
-                		'filters' => array(
-                				'from' => $this->getLastNodeTouch(),
-                				'to' => time()
-                		)
-                )
-        );
-        if (! $auditTrail) return;
-        $statusMessage = '';
-        $severity = self::NAGIOS_OK;
-        $threshold = $this->getNagiosThresholdConfig();
-        foreach ($auditTrail->responseData->auditMessages->auditMessage as $auditMessage) {
-            $creationTime = (string) $auditMessage->creationTime;
-            $user = (string) $auditMessage->username;
-            $interface = (string) $auditMessage->requestInterface;
-            $type = (string) $auditMessage->auditType;
-            $audittime = strtotime($creationTime);
-            $statusMessage .= $user . " - ";
-            $statusMessage .= $interface . " - ";
-            $statusMessage .= $type . " - ";
-            $statusMessage .= $creationTime;
-            $statusMessage .= "\n";
-            $nagiosSeverity = self::NAGIOS_OK;
-            if (isset($threshold[$type])) {
-                $nagiosSeverity = constant('self::' . $threshold[$type]);
-            }
-            if ($nagiosSeverity > $severity)
-                $severity = $nagiosSeverity;
-        }
-        if ($statusMessage == '') $statusMessage = 'No audit trail item';
-        $this->setStatusMessage($statusMessage);
-        $this->setStatus($severity);
-    }
+    
 
     /**
      * Check validity and expiration license

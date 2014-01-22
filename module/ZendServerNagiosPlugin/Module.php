@@ -10,6 +10,7 @@ use Zend\ModuleManager\Feature\BootstrapListenerInterface;
 use Zend\Config\Config;
 use Zend\Config\Reader\Ini;
 use Zend\EventManager\EventInterface;
+use Zend\Config\Factory;
 
 class Module implements ConfigProviderInterface, AutoloaderProviderInterface, 
         ConsoleBannerProviderInterface, ConsoleUsageProviderInterface
@@ -21,11 +22,7 @@ class Module implements ConfigProviderInterface, AutoloaderProviderInterface,
      */
     public function getConfig ()
     {
-        $currentConfig = include __DIR__ . '/config/zendservernagiosplugin.config.php';
-        $additionalConfigFile = new Ini();
-        $additionalConfig = $additionalConfigFile->fromFile(__DIR__ . '/../../config/config.ini');
-        $currentConfig = array_merge($currentConfig, $additionalConfig);
-        return $currentConfig;
+        return include __DIR__ . '/config/zendservernagiosplugin.config.php';
     }
 
     /**

@@ -13,7 +13,7 @@
 	],
 	"require" : {
 		"php" : ">=5.3.3",
-		"zenddevops/webapi" : ">=master-dev@dev"
+		"zenddevops/webapi" : "master-dev"
 	},
 	"minimum-stability" : "alpha"
 }

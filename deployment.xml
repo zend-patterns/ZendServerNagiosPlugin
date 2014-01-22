@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<package xmlns="http://www.zend.com/server/deployment-descriptor/1.0" version="1.0">
+    <name>ZendServerNagiosPlugin</name>
+    <version>
+        <release>2.0</release>
+    </version>
+    <appdir>src</appdir>
+    <scriptsdir>deployment</scriptsdir>
+    <dependencies>
+    <required>
+      <library>
+        <name>Zend Framework 2</name>
+        <min>2.2.4</min>
+      </library>
+    </required>
+  </dependencies>
+    <parameters>
+    <parameter display="Web api key name" id="WEB_API_KEY_NAME" readonly="false" required="true" type="string">
+      <defaultvalue>sdk</defaultvalue>
+      <description>This key should be an admin key</description>
+    </parameter>
+    <parameter display="Web api key secret" id="WEB_API_KEY_SECRET" readonly="false" required="true" type="string">
+      <defaultvalue>4a6e1ff625a0320e586b09cdf09c62be83b90f1235b60d2e34b6f5f16735c3ee</defaultvalue>
+    </parameter>
+    <parameter display="Nagios client configuration directory" id="NAGIOS_DIR" readonly="false" required="true" type="string">
+      <defaultvalue>/etc/nagios</defaultvalue>
+    </parameter>
+  </parameters>
+</package>

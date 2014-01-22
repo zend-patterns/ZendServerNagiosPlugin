@@ -31,7 +31,7 @@ abstract class AbstractNagiosController extends AbstractActionController
     public function onDispatch(MvcEvent $e)
     {
     	$actionResponse = parent::onDispatch($e);
-        fwrite(STDOUT, $this->statusMessage);
+        fwrite(STDOUT, $this->statusMessage . "\n");
         exit($this->status);
     }
     
@@ -130,6 +130,15 @@ abstract class AbstractNagiosController extends AbstractActionController
 	}
 	
 	/**
+	 * Get Nagios calss buffer manager
+	 * @return NagiosCallsBufferManager
+	 */
+	protected function getNagiosCallsBufferManager()
+	{
+		return $this->getServiceLocator()->get('NagiosCallsBufferManager');
+	}
+	
+	/**
 	 * Return command routes
 	 * @return array
 	 */
@@ -138,6 +147,24 @@ abstract class AbstractNagiosController extends AbstractActionController
 	    $config = $this->getServiceLocator()->get('config');
 	    $commandRoutes = $config['console']['router']['routes'];
 	    return $commandRoutes;
+	}
+	
+	/**
+	 * Return the last time the node has been touched by Nagios for the current command.
+	 */
+	protected function getLastNodeTouch()
+	{
+		$command = $this->getEvent()->getRouteMatch()->getParam('action');
+		return (int) $this->getNagiosCallsBufferManager()->getLastNodeTouch($command);
+	}
+	
+	/**
+	 * Set the last timethe node has been touch by Nagios for the current command
+	 */
+	protected function nodeTouch()
+	{
+		$command = $this->getEvent()->getRouteMatch()->getParam('action');
+		$this->getNagiosCallsBufferManager()->nodeTouch($command);
 	}
 
 }
