@@ -158,6 +158,7 @@ abstract class AbstractNagiosController extends AbstractActionController
 	    $console = $this->getServiceLocator()->get('console');
 	    $console->write($text,$color = null, $bgcolor= null);
 	}
+	
 	/**
 	 * Write in console
 	 * @param string $text
@@ -299,9 +300,4 @@ abstract class AbstractNagiosController extends AbstractActionController
 		}
 		return self::NAGIOS_OK;
 	}
-	
-	
-	
-	
-	
 }
