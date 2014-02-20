@@ -2,13 +2,26 @@
 return array (
 		'controllers' => array (
 				'invokables' => array (
-						'ClusterController' => 'ZendServerNagiosPlugin\Controller\ClusterController',
-						'FrontendController' => 'ZendServerNagiosPlugin\Controller\FrontendController' 
+						'Clusterstatus' => 'ZendServerNagiosPlugin\Controller\ClusterstatusController',
+						'AuditTrail' => 'ZendServerNagiosPlugin\Controller\AudittrailController',
+						'Events' => 'ZendServerNagiosPlugin\Controller\EventController',
+						'Notifications' => 'ZendServerNagiosPlugin\Controller\NotificationsController',
+						'License' => 'ZendServerNagiosPlugin\Controller\LicenseController',
+						'JobQueue' => 'ZendServerNagiosPlugin\Controller\JobqueueController',
+						//'OptimizerPlus' => 'ZendServerNagiosPlugin\Controller\OptimizerplusController',
+						'DaemonsProbe' => 'ZendServerNagiosPlugin\Controller\DaemonsprobeController',
+						//'Phpworkers' => 'ZendServerNagiosPlugin\Controller\PhpworkersController',
+						'Processingtime' => 'ZendServerNagiosPlugin\Controller\ProcessingtimeController',
+						
+						'Nagios' => 'ZendServerNagiosPlugin\Controller\NagiosController',
+						'Core' => 'ZendServerNagiosPlugin\Controller\CoreController'
 				) 
 		),
 		'service_manager' => array(
 			'factories' => array(
-					'NagiosCallsBufferManager' => 'ZendServerNagiosPlugin\Service\NagiosCallsBufferManagerFactory'
+					'NagiosCallsBufferManager' => 'ZendServerNagiosPlugin\Service\NagiosCallsBufferManagerFactory',
+					//'Zend\Db\Adapter\Adapter' => 'Zend\Db\Adapter\AdapterServiceFactory',
+					'NagiosTableGateway' => 'ZendServerNagiosPlugin\Service\NagiosTableGatewayFactory',
 			),
 		),
 		'console' => array (
@@ -17,65 +30,175 @@ return array (
 								'controller' => 'ConsoleController' 
 						),
 						'routes' => array (
-								//Cluster status (cluster wide)
-								'clusterstatus' => array (
+								//*********************    Probes    ********************
+								//Cluster status
+								'nagios-command-clusterstatus' => array (
 										'options' => array (
 												'route' => 'nagiosplugin clusterstatus',
 												'defaults' => array (
-														'controller' => 'ClusterController',
+														'controller' => 'Clusterstatus',
 														'action' => 'clusterstatus' 
 												),
 												'usage' => 'Get Cluster status' 
 										) 
 								),
-								//AuditTrail (Cluster wide)
-								'audittrail' => array (
+								//AuditTrail
+								'nagios-command-audittrail' => array (
 										'options' => array (
 												'route' => 'nagiosplugin audittrail',
 												'defaults' => array (
-														'controller' => 'ClusterController',
+														'controller' => 'AuditTrail',
 														'action' => 'audittrail',
 												),
 												'usage' => 'Get last audit trails' 
 										) 
 								),
-								'notifications' => array (
+								//Monitor events 
+								'nagios-command-events-cluster' => array (
+										'options' => array (
+												'route' => 'nagiosplugin events-cluster',
+												'defaults' => array (
+														'controller' => 'Events',
+														'action' => 'eventscluster'
+												),
+												'usage' => 'get last Monitor events (cluster)'
+										)
+								),
+								'nagios-command-events-node' => array (
+										'options' => array (
+												'route' => 'nagiosplugin events-node',
+												'defaults' => array (
+														'controller' => 'Events',
+														'action' => 'eventsnode'
+												),
+												'usage' => 'get last Monitor events (cluster)'
+										)
+								),
+								//Notification
+								'nagios-command-notifications' => array (
 										'options' => array (
 												'route' => 'nagiosplugin notifications',
 												'defaults' => array (
+														'controller' => 'Notifications',
 														'action' => 'notifications' 
 												),
 												'usage' => 'Get curent notifications' 
 										) 
 								),
-								'license' => array (
+								//License
+								'nagios-command-license' => array (
 										'options' => array (
 												'route' => 'nagiosplugin license',
 												'defaults' => array (
+														'controller' => 'License',
 														'action' => 'license' 
 												),
 												'usage' => 'Check lisence validity' 
 										) 
 								),
-								'events' => array (
+								//Job Queue
+								'nagios-command-jobqueue' => array (
 										'options' => array (
-												'route' => 'nagiosplugin events [--delay=] [--limit=]',
+												'route' => 'nagiosplugin jobqueue',
 												'defaults' => array (
-														'action' => 'events' 
+														'controller' => 'JobQueue',
+														'action' => 'jobqueue'
 												),
-												'usage' => 'get last Monitor events' 
-										) 
+												'usage' => 'Check if there are failed jobs'
+										)
 								),
-								'install' => array (
+								//Optimizer + (not implemented)
+								/*'nagios-command-optimizerplus' => array (
 										'options' => array (
-												'route' => 'nagiosplugin install --nagiosDir=',
+												'route' => 'nagiosplugin optimizerplus',
 												'defaults' => array (
-														'action' => 'install',
-														'controller' => 'FrontendController' 
+														'controller' => 'Optimizerplus',
+														'action' => 'optimizerplus'
 												),
-												'usage' => 'Install the plugin (use it as root)' 
-										) 
-								) 
+												'usage' => 'Check Optimizer+ stats'
+										)
+								),*/
+								//Daemons probe
+								'nagios-command-daemonsprobe-cluster' => array (
+										'options' => array (
+												'route' => 'nagiosplugin daemonsprobe-cluster',
+												'defaults' => array (
+														'controller' => 'DaemonsProbe',
+														'action' => 'daemonsprobecluster'
+												),
+												'usage' => 'Check if some daemons have bad status'
+										)
+								),
+								'nagios-command-daemonsprobe-node' => array (
+										'options' => array (
+												'route' => 'nagiosplugin daemonsprobe-node',
+												'defaults' => array (
+														'controller' => 'DaemonsProbe',
+														'action' => 'daemonsprobenode'
+												),
+												'usage' => 'Check if some daemons have bad status'
+										)
+								),
+								//PHP workers (not implented)
+								/*'nagios-command-phpworkers-cluster' => array (
+										'options' => array (
+												'route' => 'nagiosplugin phpworkers-cluster',
+												'defaults' => array (
+														'controller' => 'Phpworkers',
+														'action' => 'Phpworkers'
+												),
+												'usage' => 'Check number of PHP workers'
+										)
+								),*/
+								//Processing time
+								'nagios-command-processingtime-cluster' => array (
+										'options' => array (
+												'route' => 'nagiosplugin processingtime-cluster',
+												'defaults' => array (
+														'controller' => 'Processingtime',
+														'action' => 'processingtime'
+												),
+												'usage' => 'Check average request processing time'
+										)
+								),
+								
+								
+								//********************    Utils     ********************
+								//Nagios utils (use it with root credentials)
+								'add-nrpe-command' => array(
+										'options' => array (
+												'route' => 'nagiosplugin add-nrpe-command --commandId= --command=',
+												'defaults' => array (
+														'controller' => 'Nagios',
+														'action' => 'addnrpecommand'
+												),
+												'usage' => 'Add a command to the nrpe-server (use it with root credentials)'
+										)
+								),
+								'restart-nrpe-server' => array(
+										'options' => array (
+												'route' => 'nagiosplugin restart-nrpe-server',
+												'defaults' => array (
+														'controller' => 'Nagios',
+														'action' => 'restartnrpeserver'
+												),
+												'usage' => 'Restart nrpe server (use it with root credentials)'
+										)
+								),
+								
+								//Install node
+								'install-node' => array(
+										'options' => array (
+												'route' => 'nagiosplugin install-node',
+												'defaults' => array (
+														'controller' => 'Core',
+														'action' => 'installnode'
+												),
+												'usage' => 'Install plugin on the current node (use it with root credentials)'
+										)
+								),
+								
+								
 						) 
 				) 
 		) 

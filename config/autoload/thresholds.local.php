@@ -7,8 +7,8 @@ return array (
 				 */
 				'clusterstatus' => array (
 						'0' => 'NAGIOS_OK',
-						'33' => 'NAGIOS_WARNING',
-						'75' => 'ANGIOS_CRITICAL' 
+						'1' => 'NAGIOS_WARNING',
+						'33' => 'NAGIOS_CRITICAL' 
 				),
 				/*
 				 * Notifications
@@ -118,6 +118,42 @@ return array (
 						'AUDIT_CONFIGURATION_IMPORT' => 'NAGIOS_OK',
 						'AUDIT_CONFIGURATION_RESET' => 'NAGIOS_OK',
 						'AUDIT_RELOAD_CONFIGURATION' => 'NAGIOS_OK' 
-				) 
+				),
+				/*
+				 * Job Queue
+				 * Based on number of failed jobs 
+				*/
+				'jobqueue' => array (
+						0 => 'NAGIOS_OK',
+						1 => 'NAGIOS_WARNING',
+						5 => 'NAGIOS_CRITICAL'
+				),
+				/*
+				 * Daemons probe
+				 * Based on severity of daemon status
+				 */
+				'daemonsprobe' => array (
+						'info' => 'NAGIOS_OK',
+						'warning' => 'NAGIOS_WARNING',
+						'error' => 'NAGIOS_CRITICAL',
+				),
+				/*
+				 * PHP workers
+				 * 
+				 */
+				'phpworkers' => array (
+						'info' => 'NAGIOS_OK',
+						'warning' => 'NAGIOS_WARNING',
+						'error' => 'NAGIOS_CRITICAL',
+				),
+				/*
+				 * Processing time
+				 * Based on the average of requte processing time
+				*/
+				'processingtime' => array (
+						'2000' => 'NAGIOS_WARNING',
+						'5000' => 'NAGIOS_CRITICAL',
+				),
+				
 		) 
 );

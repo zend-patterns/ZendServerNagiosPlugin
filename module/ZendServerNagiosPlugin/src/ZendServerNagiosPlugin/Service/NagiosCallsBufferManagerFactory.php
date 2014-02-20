@@ -9,6 +9,7 @@ class NagiosCallsBufferManagerFactory implements FactoryInterface
 	public function createService(ServiceLocatorInterface $serviceLocator)
 	{
 		$manager = new \ZendServerNagiosPlugin\Model\NagiosCallsBufferManager();
+		$manager->setServiceManager($serviceLocator);
 		return $manager;
 	}
 	

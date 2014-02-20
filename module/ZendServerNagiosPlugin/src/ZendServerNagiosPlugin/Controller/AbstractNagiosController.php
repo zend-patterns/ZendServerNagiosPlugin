@@ -4,6 +4,7 @@ namespace ZendServerNagiosPlugin\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Mvc\MvcEvent;
 use ZendServerWebApi\Model\Exception\ApiException;
+use ZendServerNagiosPlugin\Model\Touch;
 
 abstract class AbstractNagiosController extends AbstractActionController
 {
@@ -11,6 +12,9 @@ abstract class AbstractNagiosController extends AbstractActionController
     const NAGIOS_WARNING = 1;
     const NAGIOS_CRITICAL = 2;
     const NAGIOS_UNKNOWN = 3;
+    
+    const NODE_ONLY_MODE = 10;
+    const CLUSTER_MODE = 20;
     
     /**
      * Nagios plugin status
@@ -22,9 +26,37 @@ abstract class AbstractNagiosController extends AbstractActionController
      * Nagios plugin message
      * @var string
      */
-    protected $statusMessage = 'Service unreachable';
+    protected $statusMessage = '';
     
     /**
+     * Current Nagios requesting mode (node / cluster)
+     * 
+     * @var int
+     */
+    protected $requestingMode = self::CLUSTER_MODE;
+    
+    /**
+     * Node Id (id of the node in the database)
+     * 
+     * @var int
+     */
+    protected $nodeId = -1;
+    
+    /**
+     * Footprint of the current response
+     * 
+     * @var string
+     */
+    protected $footprint = '';
+    
+    /**
+     * Is the foot print has change
+     * 
+     * @var boolean
+     */
+    protected $hasChange = false;
+    
+	/**
      * (non-PHPdoc)
      * @see \Zend\Mvc\Controller\AbstractActionController::onDispatch()
      */
@@ -52,17 +84,33 @@ abstract class AbstractNagiosController extends AbstractActionController
 		$this->statusMessage = $statusMessage;
 	}
 	
-
+	/**
+	 * Set requesting mode  : cluster
+	 */
+	protected function setRequestingModeCluster()
+	{
+		$this->requestingMode = self::CLUSTER_MODE;
+	}
+	
+	/**
+	 * Set requesting mode  : node only
+	 */
+	protected function setRequestingModeNode()
+	{
+		$this->requestingMode = self::NODE_ONLY_MODE;
+	}
+	
 	/**
 	 * Return the Nagios thresholds configuration for the current action
 	 * @return NULL|unknown
 	 */
-	protected function getNagiosThresholdConfig()
+	protected function getNagiosThresholdConfig($action = null)
 	{
 		$config = $this->getServiceLocator()->get('config');
 		$nagiosConfig = $config['nagios_threshold'];
-		if ( ! is_array($nagiosConfig[$this->params('action')])) return null;
-		return  $nagiosConfig[$this->params('action')];
+		if ( ! $action) $action = $this->params('action');
+		if ( ! is_array($nagiosConfig[$action])) return null;
+		return  $nagiosConfig[$action];
 	}
 	
 	/**
@@ -78,6 +126,11 @@ abstract class AbstractNagiosController extends AbstractActionController
 	    $apiManager = $serviceManager->get('zend_server_api');
 	    try {
 	       $methodResponse = $apiManager->$method($params);
+	       $this->footprint = Touch::computeFootprint($methodResponse->getHttpResponse()->getBody());
+	       $lastFootprint = $this->getLastTouch()->getFootPrint();
+	       if ($this->footprint != $lastFootprint) $this->hasChnage = true;
+	       else $this->hasChnage = false;
+	       $this->touch($this->footprint);
 	    } catch (ApiException $e)
 	    {
 	       $this->setStatusMessage('[ZendServerAPIError] - ' . $e->getApiErrorCode());
@@ -140,6 +193,7 @@ abstract class AbstractNagiosController extends AbstractActionController
 	
 	/**
 	 * Return command routes
+	 * 
 	 * @return array
 	 */
 	protected function getCommandRoutes()
@@ -150,21 +204,97 @@ abstract class AbstractNagiosController extends AbstractActionController
 	}
 	
 	/**
-	 * Return the last time the node has been touched by Nagios for the current command.
+	 * Set the last time the node has been touch by Nagios for the current command
 	 */
-	protected function getLastNodeTouch()
+	protected function touch($footprint = '')
 	{
+		$nodeId = 0;
+		if ($this->requestingMode != self::CLUSTER_MODE) $nodeId = $this->getNodeId();
 		$command = $this->getEvent()->getRouteMatch()->getParam('action');
-		return (int) $this->getNagiosCallsBufferManager()->getLastNodeTouch($command);
+		$this->getNagiosCallsBufferManager()->nodeTouch($command, $nodeId, $footprint);
 	}
 	
 	/**
-	 * Set the last timethe node has been touch by Nagios for the current command
+	 * Return the last touch
+	 * 
+	 * @var Touch
 	 */
-	protected function nodeTouch()
+	protected function getLastTouch()
 	{
 		$command = $this->getEvent()->getRouteMatch()->getParam('action');
-		$this->getNagiosCallsBufferManager()->nodeTouch($command);
+		if ($this->requestingMode == self::NODE_ONLY_MODE) 
+			return $this->getNagiosCallsBufferManager()->getLastNodeTouch($command, $this->getNodeid());
+		if ($this->requestingMode == self::CLUSTER_MODE) 
+			return $this->getNagiosCallsBufferManager()->getLastClusterTouch($command); 
 	}
-
+	
+	/**
+	 * Return the hasChnage value.
+	 * 
+	 * @return bololean
+	 */
+	protected function hasChange()
+	{
+		return $this->hasChnage;
+	}
+	
+	/**
+	 * Return the url of the target Zend Server
+	 * 
+	 * @return string
+	 */
+	protected function getZendServerUrl()
+	{
+		$config = $this->getServiceLocator()->get('config');
+		return $config['zsapi']['target']['zsurl'];
+	}
+	
+	/*
+	 * Return node Id
+	 * 
+	 * @retun int 
+	 */
+	protected function getNodeId()
+	{
+		if ($this->nodeId > -1) return $this->nodeId;
+		$apiManager = $this->getServiceLocator()->get('zend_server_api');
+		$clusterStatus = $apiManager->clusterGetServerStatus();
+		if ( ! $clusterStatus) return false;
+		$currentHost = gethostname();
+		foreach ($clusterStatus->responseData->serversList->serverInfo as $serverInfo){
+			$serverId = (string)$serverInfo->id;
+			$name = (string)$serverInfo->name;
+			if ($currentHost == $name) {
+				$this->nodeId = $serverId;
+				return $serverId;
+			}
+		}
+	}
+	
+	/**
+	 * Return nagios  severity
+	 * 
+	 * @param mixed $value
+	 * @param string $action
+	 * @return int
+	 */
+	protected function getNagiosSeverity($value,$action = null)
+	{
+		$config = $this->getNagiosThresholdConfig($action);
+		asort($config);
+		foreach ($config as $threshold => $severyString)
+		{
+			if (is_int($value)) {
+				if ($value >= $threshold) return constant('self::' . $severyString);
+			}
+			else if ($value == $threshold) return constant('self::' . $severyString);
+			
+		}
+		return self::NAGIOS_OK;
+	}
+	
+	
+	
+	
+	
 }

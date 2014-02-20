@@ -1,19 +1,12 @@
 {
-	"name" : "zenddevops\\zendservernagiosplugin",
-	"description" : "Zend Server Nagios pugin",
-	"keywords" : [
-		"zf2",
-		"zend server",
-		"devops",
-		"nagios",
-		"plugin"
-	],
-	"license" : [
-		"BSD-3-Clause"
-	],
-	"require" : {
-		"php" : ">=5.3.3",
-		"zenddevops/webapi" : "master-dev"
-	},
-	"minimum-stability" : "alpha"
+  "name" : "zenddevops\\zendservernagiosplugin",
+  "description" : "Zend Server Nagios pugin",
+  "require" : {
+    "php" : ">=5.3.3",
+    "zendframework/zend-db" : "=2.2.5",
+    "zenddevops/webapi" : "=1.2.0"
+  },
+  "keywords" : [ "zf2", "zend server", "devops", "nagios", "plugin" ],
+  "minimum-stability" : "alpha",
+  "license" : [ "BSD-3-Clause" ]
 }

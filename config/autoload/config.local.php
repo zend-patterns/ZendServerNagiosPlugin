@@ -1,10 +1,10 @@
 <?php
 return array(
-	'zsapi' => array (
-		'target' => array(
+	'target_manager_config' => array (
+		'default' => array(
 			'zsurl' => 'http://localhost:10081/ZendServer',
-			'zskey' => 'admin',
-			'zssecret' => 'fdbe02cc14bf1b48787e379bc420fd46ba9c88a3cc85c2030b5e32610e75efa5',
+			'zskey' => 'nagios',
+			'zssecret' => 'bbf577555266b24542748d05b892e236d8ee9df0bf864fd9a1a126e5bdaf5d07',
 			'zsversion' => '6.2'
 		),
 	),
@@ -14,7 +14,8 @@ return array(
 		),
 		'client' => array(
 				'config' => array(
-						'directory' => '/etc/nagios'
+						'directory' => '/etc/nagios',
+						'service-remote' => 'service nagios-nrpe-server'
 				),
 		),
 	),

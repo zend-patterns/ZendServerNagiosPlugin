@@ -22,7 +22,8 @@ class Module implements ConfigProviderInterface, AutoloaderProviderInterface,
      */
     public function getConfig ()
     {
-        return include __DIR__ . '/config/zendservernagiosplugin.config.php';
+        $config =  include __DIR__ . '/config/zendservernagiosplugin.config.php';
+        return $config;
     }
 
     /**

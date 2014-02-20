@@ -16,14 +16,23 @@
   </dependencies>
     <parameters>
     <parameter display="Web api key name" id="WEB_API_KEY_NAME" readonly="false" required="true" type="string">
-      <defaultvalue>sdk</defaultvalue>
+      <defaultvalue>nagios</defaultvalue>
       <description>This key should be an admin key</description>
     </parameter>
     <parameter display="Web api key secret" id="WEB_API_KEY_SECRET" readonly="false" required="true" type="string">
-      <defaultvalue>4a6e1ff625a0320e586b09cdf09c62be83b90f1235b60d2e34b6f5f16735c3ee</defaultvalue>
-    </parameter>
+      <defaultvalue>39007905543029a96f3c2ffb24f624eaaccefd9ae8cf291ffd398c14830a6b0f</defaultvalue>
+      </parameter>
     <parameter display="Nagios client configuration directory" id="NAGIOS_DIR" readonly="false" required="true" type="string">
       <defaultvalue>/etc/nagios</defaultvalue>
     </parameter>
+    <parameter display="Command line to reach nrpe server service manager" id="NAGIOS_SERVICE" readonly="false" required="true" type="string">
+      <defaultvalue>service nagios-nrpe-server</defaultvalue>
+    </parameter>
+    <parameter display="Web API main URI" id="SERVER_URI" readonly="false" required="false" type="string">
+      <defaultvalue>http://localhost:10081/ZendServer</defaultvalue>
+    </parameter>
+    <parameter display="Zend Server version" id="ZS_VERSION" readonly="false" required="false" type="string">
+      <defaultvalue>6.2</defaultvalue>
+    </parameter>
   </parameters>
-</package>
+    </package>
