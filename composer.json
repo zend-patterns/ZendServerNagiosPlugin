@@ -1,5 +1,5 @@
 {
-  "name" : "zenddevops\\zendservernagiosplugin",
+  "name" : "zend-patterns/zendservernagiosplugin",
   "description" : "Zend Server Nagios pugin",
   "require" : {
     "php" : ">=5.3.3",
