@@ -20,7 +20,7 @@ return array (
 		'service_manager' => array(
 			'factories' => array(
 					'NagiosCallsBufferManager' => 'ZendServerNagiosPlugin\Service\NagiosCallsBufferManagerFactory',
-					//'Zend\Db\Adapter\Adapter' => 'Zend\Db\Adapter\AdapterServiceFactory',
+					'Zend\Db\Adapter\Adapter' => 'Zend\Db\Adapter\AdapterServiceFactory',
 					'NagiosTableGateway' => 'ZendServerNagiosPlugin\Service\NagiosTableGatewayFactory',
 			),
 		),

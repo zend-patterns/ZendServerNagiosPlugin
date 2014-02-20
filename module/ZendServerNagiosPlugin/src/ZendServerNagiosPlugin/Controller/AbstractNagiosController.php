@@ -5,6 +5,8 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Mvc\MvcEvent;
 use ZendServerWebApi\Model\Exception\ApiException;
 use ZendServerNagiosPlugin\Model\Touch;
+use ZendServerWebApi\Model\ApiManager;
+use ZendServerWebApi\Model\Http\Client;
 
 abstract class AbstractNagiosController extends AbstractActionController
 {
@@ -123,7 +125,12 @@ abstract class AbstractNagiosController extends AbstractActionController
 	protected function sendApiMethod($method, $params = array()) 
 	{
 	    $serviceManager = $this->getServiceLocator();
-	    $apiManager = $serviceManager->get('zend_server_api');
+	    $target = current($serviceManager->get('target_manager'))->getTarget('default');
+	    $apiMethodConfig = $serviceManager->get('apiMethodsConfig');
+	    $apiManager = new ApiManager();
+        $apiManager->setTarget($target);
+        $apiManager->setApiMethodsConfig($apiMethodConfig);
+        $apiManager->setZendServerClient(new Client());
 	    try {
 	       $methodResponse = $apiManager->$method($params);
 	       $this->footprint = Touch::computeFootprint($methodResponse->getHttpResponse()->getBody());

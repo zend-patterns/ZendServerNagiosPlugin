@@ -95,7 +95,7 @@ class CoreController extends AbstractActionController
 			$databaseConfig = include __ROOT__ . '/config/autoload/zsdatabase.local.php';
 			$config['db'] = $databaseConfig['db'];
 		}
-		$adapter = \Zend\Db\Adapter\Adapter($config['db']);
+		$adapter = new \Zend\Db\Adapter\Adapter($config['db']);
 		$tmp = $adapter->query('SHOW TABLES LIKE "nagios";')->execute();
 		$isInstalled = $tmp->current();
 		if ($isInstalled) return;
