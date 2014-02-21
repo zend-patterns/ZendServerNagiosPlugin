@@ -111,18 +111,18 @@ The best practices are :
 
 Doing that you can monitor cluster and nodes separately.
 
-Define the command  into your /usr/local/nagios3/commands.cfg file. You will find the command_line value into /etc/nagios/nrpe.cfg (on monitored node). This file has been created during deployment process.
+Define the command  into your /usr/local/nagios3/commands.cfg file. You will find the "nrpe-command" value into /etc/nagios/nrpe.cfg (on monitored node). This file has been created during deployment process.
 
     define command {
-	    command_name : zend-server-<probe>
-	    command_line : php /path_to_nagios_pluigin/index.php nagiosplugin <probe> [parameters]
+	    command_name zend-server-<probe>
+	    command_line $USER1$/check_nrpe -H $HOSTADDRESS$ -c nrpe-command
     }
     
 Define the service into your host configuration (ie : /usr/local/nagios3/conf.d/local-xxx.cfg): 
 
     define service {
         use                             generic-service 
-        host_name                       localhost
+        host_name                       my.node-x.tld
         service_description             Zend_Server_Error
         check_command                   zend-server-<probe>
     }   
