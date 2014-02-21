@@ -1,5 +1,5 @@
 {
-	"name" : "zenddevops\\zendservernagiosplugin",
+	"name" : "zend-patterns/zendservernagiosplugin",
 	"description" : "Zend Server Nagios pugin",
 	"keywords" : [
 		"zf2",
