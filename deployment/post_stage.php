@@ -10,7 +10,6 @@ $configArray = array(
 	),
 	'nagios' => array(
 			'plugin' => array(
-					//'directory' => '/var/www/ZendServerNagiosPlugins'
 					'directory' => getenv('ZS_APPLICATION_BASE_DIR'),
 			),
 			'client' => array(

@@ -46,7 +46,7 @@ return array (
 								'nagios-command-audittrail' => array (
 										'options' => array (
 												'route' => 'nagiosplugin audittrail',
-												'defaults' => array (
+								        		'defaults' => array (
 														'controller' => 'AuditTrail',
 														'action' => 'audittrail',
 												),
