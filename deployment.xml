@@ -8,11 +8,9 @@
     <scriptsdir>deployment</scriptsdir>
     <parameters>
     <parameter display="Web api key name" id="WEB_API_KEY_NAME" readonly="false" required="true" type="string">
-      <defaultvalue>nagios</defaultvalue>
       <description>This key should be an admin key</description>
     </parameter>
     <parameter display="Web api key secret" id="WEB_API_KEY_SECRET" readonly="false" required="true" type="string">
-      <defaultvalue>39007905543029a96f3c2ffb24f624eaaccefd9ae8cf291ffd398c14830a6b0f</defaultvalue>
       </parameter>
     <parameter display="Nagios client configuration directory" id="NAGIOS_DIR" readonly="false" required="true" type="string">
       <defaultvalue>/etc/nagios</defaultvalue>
