@@ -124,13 +124,16 @@ abstract class AbstractNagiosController extends AbstractActionController
 	 */
 	protected function sendApiMethod($method, $params = array()) 
 	{
+	    $config = $this->getServiceLocator()->get('config');
 	    $serviceManager = $this->getServiceLocator();
 	    $target = current($serviceManager->get('target_manager'))->getTarget('default');
 	    $apiMethodConfig = $serviceManager->get('apiMethodsConfig');
 	    $apiManager = new ApiManager();
         $apiManager->setTarget($target);
         $apiManager->setApiMethodsConfig($apiMethodConfig);
-        $apiManager->setZendServerClient(new Client());
+        $httpClientConfig = $config['api_http_client'];
+        $zsclient = new $httpClientConfig['class']('',$httpClientConfig['config']);
+        $apiManager->setZendServerClient($zsclient);
 	    try {
 	       $methodResponse = $apiManager->$method($params);
 	       $this->footprint = Touch::computeFootprint($methodResponse->getHttpResponse()->getBody());
@@ -265,8 +268,7 @@ abstract class AbstractNagiosController extends AbstractActionController
 	protected function getNodeId()
 	{
 		if ($this->nodeId > -1) return $this->nodeId;
-		$apiManager = $this->getServiceLocator()->get('zend_server_api');
-		$clusterStatus = $apiManager->clusterGetServerStatus();
+		$clusterStatus = $this->sendApiMethod('clusterGetServerStatus');
 		if ( ! $clusterStatus) return false;
 		$currentHost = gethostname();
 		foreach ($clusterStatus->responseData->serversList->serverInfo as $serverInfo){

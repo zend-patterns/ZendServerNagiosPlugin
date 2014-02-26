@@ -8,6 +8,12 @@ $configArray = array(
 					'zsversion' => getenv('ZS_ZS_VERSION')
 			),
 	),
+    'api_http_client' => array(
+    		'class' => 'ZendServerWebApi\Model\Http\Client',
+    		'config' => array(
+    				'adapter'=> 'ZendServerWebApi\Model\Http\Adapter\Socket'
+    		),
+    ),
 	'nagios' => array(
 			'plugin' => array(
 					'directory' => getenv('ZS_APPLICATION_BASE_DIR'),

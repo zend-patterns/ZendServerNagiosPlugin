@@ -13,7 +13,7 @@ class ProcessingtimeController extends AbstractNagiosController
     public function processingtimeAction ()
     {
         $processingtime = $this->sendApiMethod('statisticsGetSeries', array(
-        	'from' => $this->getLastTouch()->getLastTouch(),
+        	'from' => $this->getLastTouch()->getLastTouch() - 60,
     		'to' => time(),
         	'type' => 'AVG_REQUEST_PROCESSING_TIME'
         ));
