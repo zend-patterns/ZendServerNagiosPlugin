@@ -28,6 +28,7 @@ class ProcessingtimeController extends AbstractNagiosController
             if ($issueSeverity > self::NAGIOS_OK) $statusMessage .= $timeElapsed . 'ms : ' . $time . ' | ';
             if ($issueSeverity > $severity) $severity = $issueSeverity;
         }
+        if ($statusMessage == '') $statusMessage = 'No data';
         $this->setStatusMessage($statusMessage);
         $this->setStatus($severity);
     }
