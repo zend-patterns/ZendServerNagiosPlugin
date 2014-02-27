@@ -42,7 +42,7 @@ class DaemonsprobeController extends AbstractNagiosController
     	$daemonsprobe = $this->sendApiMethod('daemonsProbe');
     	$threshold = $this->getNagiosThresholdConfig('daemonsprobe');
     	$severity = self::NAGIOS_OK;
-    	$serverId = $this->getNodeId();
+    	//$serverId = $this->getNodeId();
     	$statusMessage = '';
     	if ($this->hasChange()) {
 	    	foreach ($daemonsprobe->responseData->daemonMessages->daemonMessage as $message) {

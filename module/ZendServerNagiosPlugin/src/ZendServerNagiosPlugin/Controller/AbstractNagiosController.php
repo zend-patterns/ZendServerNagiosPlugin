@@ -138,8 +138,8 @@ abstract class AbstractNagiosController extends AbstractActionController
 	       $methodResponse = $apiManager->$method($params);
 	       $this->footprint = Touch::computeFootprint($methodResponse->getHttpResponse()->getBody());
 	       $lastFootprint = $this->getLastTouch()->getFootPrint();
-	       if ($this->footprint != $lastFootprint) $this->hasChnage = true;
-	       else $this->hasChnage = false;
+	       if ($this->footprint != $lastFootprint) $this->hasChange = true;
+	       else $this->hasChange = false;
 	       $this->touch($this->footprint);
 	    } catch (ApiException $e) {
 	       $this->setStatusMessage('[ZendServerAPIError] - ' . $e->getApiErrorCode());
@@ -249,7 +249,7 @@ abstract class AbstractNagiosController extends AbstractActionController
 	 */
 	protected function hasChange()
 	{
-		return $this->hasChnage;
+		return $this->hasChange;
 	}
 	
 	/**
@@ -271,17 +271,9 @@ abstract class AbstractNagiosController extends AbstractActionController
 	protected function getNodeId()
 	{
 		if ($this->nodeId > -1) return $this->nodeId;
-		$clusterStatus = $this->sendApiMethod('clusterGetServerStatus');
-		if ( ! $clusterStatus) return false;
-		$currentHost = gethostname();
-		foreach ($clusterStatus->responseData->serversList->serverInfo as $serverInfo){
-			$serverId = (string)$serverInfo->id;
-			$name = (string)$serverInfo->name;
-			if ($currentHost == $name) {
-				$this->nodeId = $serverId;
-				return $serverId;
-			}
-		}
+	    $config = $this->getServiceLocator()->get('config');
+	    $this->nodeId = $config['nodeId'];
+	    return $this->nodeId;
 	}
 	
 	/**

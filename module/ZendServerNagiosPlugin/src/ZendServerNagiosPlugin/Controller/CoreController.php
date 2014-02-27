@@ -8,7 +8,7 @@ use Zend\Config\Reader\Ini;
 use Zend\Config\Config;
 use Zend\Config\Writer\PhpArray;
 
-class CoreController extends AbstractActionController
+class CoreController extends AbstractNagiosController
 {
 	/**
 	 * Add a command in the nrep.cfg file.
@@ -19,7 +19,8 @@ class CoreController extends AbstractActionController
 		$this->installDatabaseConfig();
 		$this->configureNrpeServer();
 		$this->forward()->dispatch('Nagios', array('action' => 'restartnrpeserver'));
-		$this->installdatabase();
+		exec ('/usr/local/zend/bin/php ' . __ROOT__ . '/index.php nagiosplugin install-database');
+		exec ('/usr/local/zend/bin/php ' . __ROOT__ . '/index.php nagiosplugin install-finish');
 	}
 	
 	/**
@@ -61,6 +62,7 @@ class CoreController extends AbstractActionController
 		));
 		$dbConfigWritter = new PhpArray();
 		$dbConfigWritter->toFile(__ROOT__ . '/config/autoload/zsdatabase.local.php', $dbConfig);
+		
 	}
 	
 	/**
@@ -88,19 +90,37 @@ class CoreController extends AbstractActionController
 	/**
 	 * Install Nagios table in Zend Server database
 	 */
-	protected function installdatabase()
+	public function installdatabaseAction()
 	{
 	    $config = $this->getServiceLocator()->get('config');
-		if ( ! isset($config['db'])){
-			$databaseConfig = include __ROOT__ . '/config/autoload/zsdatabase.local.php';
-			$config['db'] = $databaseConfig['db'];
-		}
 		$adapter = new \Zend\Db\Adapter\Adapter($config['db']);
 		$tmp = $adapter->query('SHOW TABLES LIKE "nagios";')->execute();
 		$isInstalled = $tmp->current();
 		if ($isInstalled) return;
 		$queryString = file_get_contents(__DIR__ . '/../../../config/schema.sql');
 		$result = $adapter->query($queryString)->execute();
+	}
+	
+	/**
+	 * Finish installation process
+	 */
+	public function installfinishAction()
+	{
+	    //Set node id
+	    $clusterStatus = $this->sendApiMethod('clusterGetServerStatus');
+	    if ( ! $clusterStatus) return false;
+	    $currentHost = gethostname();
+	    foreach ($clusterStatus->responseData->serversList->serverInfo as $serverInfo){
+	    	$serverId = (string)$serverInfo->id;
+	    	$name = (string)$serverInfo->name;
+	    	if ($currentHost == $name) {
+	    		$nodeId = $serverId;
+	    	}
+	    }
+	    $configArray = include __ROOT__ . '/config/autoload/config.local.php';
+	    $configArray['nodeId'] = $nodeId;
+	    $arrayStr = '<?php return ' . var_export($configArray, true) .';';
+	    file_put_contents(__ROOT__ .'/config/autoload/config.local.php', $arrayStr);
 	}
 	
 }

@@ -197,6 +197,28 @@ return array (
 												'usage' => 'Install plugin on the current node (use it with root credentials)'
 										)
 								),
+    						    //Install database
+    						    'install-database' => array(
+    						    		'options' => array (
+    						    				'route' => 'nagiosplugin install-database',
+    						    				'defaults' => array (
+    						    						'controller' => 'Core',
+    						    						'action' => 'installdatabase'
+    						    				),
+    						    				'usage' => 'Create nagios table into zend cluster database'
+    						    		)
+    						    ),
+    						    //finish install process
+    						    'install-finish' => array(
+    						    		'options' => array (
+    						    				'route' => 'nagiosplugin install-finish',
+    						    				'defaults' => array (
+    						    						'controller' => 'Core',
+    						    						'action' => 'installfinish'
+    						    				),
+    						    				'usage' => 'Finish node installation'
+    						    		)
+    						    ),
 								
 								
 						) 
