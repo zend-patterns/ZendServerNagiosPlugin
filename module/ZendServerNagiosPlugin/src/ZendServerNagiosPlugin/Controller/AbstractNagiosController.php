@@ -141,17 +141,20 @@ abstract class AbstractNagiosController extends AbstractActionController
 	       if ($this->footprint != $lastFootprint) $this->hasChnage = true;
 	       else $this->hasChnage = false;
 	       $this->touch($this->footprint);
-	    } catch (ApiException $e)
-	    {
+	    } catch (ApiException $e) {
 	       $this->setStatusMessage('[ZendServerAPIError] - ' . $e->getApiErrorCode());
 	       $this->setStatus(self::NAGIOS_CRITICAL);
-	       return false;
+	       if (isset($methodResponse)) return $methodResponse;
+	       throw $e;
+	    } catch (\Exception $e) {
+	        throw $e;
 	    }
 	    return $methodResponse;
 	}
 	
 	/**
 	 * Write in console
+	 * 
 	 * @param string $text
 	 * @param string $color
 	 * @param string $bgcolor
